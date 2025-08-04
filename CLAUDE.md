@@ -47,19 +47,27 @@ src/
 - `usage_logs` - Feature usage tracking
 - `subscriptions` - User subscription management
 
-### Key Features to Implement
-1. **Personality Analysis Engine** - DISC personality prediction from text/data
-2. **Communication Assistant** - Personalized templates and suggestions
+### Key Features Implemented
+1. **AI-Powered Personality Analysis** - Claude 3.5 Haiku via OpenRouter for DISC analysis
+2. **Communication Assistant** - Personalized templates and AI-powered suggestions
 3. **Dashboard** - Profile management and analytics
 4. **Subscription System** - Free/Premium tiers with usage limits
+5. **Template System** - Pre-built communication templates for each DISC type
+6. **Writing Assistant** - Real-time personality-based communication tips
 
 ## Environment Setup
 
 Create `.env.local` with:
 ```
+# Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_key
+
+# OpenRouter AI Configuration
+OPENROUTER_API_KEY=your_openrouter_api_key
+OPENROUTER_MODEL=anthropic/claude-3.5-haiku
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 ## Supabase Setup
@@ -75,3 +83,11 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_key
 - Supabase client is split between browser/server configurations
 - shadcn/ui components use the `@/` import alias
 - All database operations should respect RLS policies
+
+## AI Integration
+
+- **Claude 3.5 Haiku** via OpenRouter for personality analysis
+- Cost-effective: ~$0.01-0.03 per analysis
+- Automatic fallback to basic analysis if AI unavailable
+- Sophisticated DISC analysis with detailed insights
+- 30-second timeout protection and error handling

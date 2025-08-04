@@ -3,7 +3,9 @@
     "allow": [
       "Bash(ls:*)",
       "Bash(npm install:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }
