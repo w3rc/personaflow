@@ -21,11 +21,12 @@ cp .env.example .env.local
    - Safe to expose in browser - designed for client-side use
    - Security enforced by Row Level Security (RLS) policies
 
-3. **SUPABASE_SERVICE_ROLE_KEY**: Your Supabase service role key
+3. **SUPABASE_SERVICE_ROLE_KEY**: Your Supabase service role key (OPTIONAL)
    - Get from: Supabase Dashboard → Your Project → Settings → API → service_role key
    - ⚠️ **CRITICAL**: Never expose this key to the browser
    - Currently not used in the application (good security practice)
    - Only use for admin operations that bypass RLS
+   - **Can be removed** if you're certain you won't need admin database access
 
 ### OpenRouter Configuration
 
