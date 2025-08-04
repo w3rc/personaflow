@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Analysis API error:', error)
     const serverError = handleValidationError({ errors: ['Internal server error during analysis'] })
-    logError(serverError, { userId, requestUrl: request.url })
+    logError(serverError, { requestUrl: request.url })
     return createErrorResponse(serverError, 500)
   }
 }

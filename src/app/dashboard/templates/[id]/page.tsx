@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -26,40 +26,8 @@ interface Template {
   updated_at?: string
 }
 
-export default function TemplatePage() {
-  const [template, setTemplate] = useState<Template | null>(null)
-  const [isEditing, setIsEditing] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    disc_type: '',
-    template_content: '',
-    description: ''
-  })
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-  const router = useRouter()
-  const params = useParams()
-  const supabase = createClient()
-
-  const categories = [
-    { id: 'email', name: 'Email' },
-    { id: 'meeting', name: 'Meeting' },
-    { id: 'sales', name: 'Sales' },
-    { id: 'other', name: 'Other' }
-  ]
-
-  const discTypes = [
-    { id: 'D', name: 'Dominance', color: 'bg-red-100 text-red-800' },
-    { id: 'I', name: 'Influence', color: 'bg-yellow-100 text-yellow-800' },
-    { id: 'S', name: 'Steadiness', color: 'bg-green-100 text-green-800' },
-    { id: 'C', name: 'Conscientiousness', color: 'bg-blue-100 text-blue-800' },
-    { id: 'ALL', name: 'All Types', color: 'bg-gray-100 text-gray-800' }
-  ]
-
-  // Default templates data (same as in main templates page)
-  const defaultTemplates: Record<string, Template> = {
+// Default templates data (moved outside component)
+const defaultTemplates: Record<string, Template> = {
     'default-1': {
       id: 'default-1',
       name: 'Cold Email - D Type',
@@ -108,11 +76,39 @@ P.S. Congratulations again on [ACHIEVEMENT]! 🎊`,
     // Add other default templates as needed
   }
 
-  useEffect(() => {
-    loadTemplate()
-  }, [params.id])
+export default function TemplatePage() {
+  const [template, setTemplate] = useState<Template | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '',
+    category: '',
+    disc_type: '',
+    template_content: '',
+    description: ''
+  })
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
+  const params = useParams()
+  const supabase = createClient()
 
-  const loadTemplate = async () => {
+  const categories = [
+    { id: 'email', name: 'Email' },
+    { id: 'meeting', name: 'Meeting' },
+    { id: 'sales', name: 'Sales' },
+    { id: 'other', name: 'Other' }
+  ]
+
+  const discTypes = [
+    { id: 'D', name: 'Dominance', color: 'bg-red-100 text-red-800' },
+    { id: 'I', name: 'Influence', color: 'bg-yellow-100 text-yellow-800' },
+    { id: 'S', name: 'Steadiness', color: 'bg-green-100 text-green-800' },
+    { id: 'C', name: 'Conscientiousness', color: 'bg-blue-100 text-blue-800' },
+    { id: 'ALL', name: 'All Types', color: 'bg-gray-100 text-gray-800' }
+  ]
+
+  const loadTemplate = useCallback(async () => {
     try {
       setLoading(true)
       const templateId = params.id as string
@@ -164,7 +160,11 @@ P.S. Congratulations again on [ACHIEVEMENT]! 🎊`,
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.id, router, supabase])
+
+  useEffect(() => {
+    loadTemplate()
+  }, [loadTemplate])
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -251,7 +251,7 @@ P.S. Congratulations again on [ACHIEVEMENT]! 🎊`,
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">Template Not Found</h1>
-          <p className="text-muted-foreground mb-4">The template you're looking for doesn't exist.</p>
+          <p className="text-muted-foreground mb-4">The template you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/dashboard/templates">
             <Button>Back to Templates</Button>
           </Link>

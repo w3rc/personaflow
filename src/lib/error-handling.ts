@@ -67,7 +67,8 @@ export function createSecureError(
   originalError?: Error | string,
   additionalContext?: Record<string, any>
 ): SecureError {
-  const message = ErrorMessages[code] || ErrorMessages[ErrorCodes.UNKNOWN_ERROR]
+  const errorCode = ErrorCodes[code]
+  const message = ErrorMessages[errorCode] || ErrorMessages[ErrorCodes.UNKNOWN_ERROR]
   
   // Log the original error for debugging (server-side only)
   if (typeof window === 'undefined') {
@@ -76,7 +77,7 @@ export function createSecureError(
   
   return {
     message,
-    code,
+    code: errorCode,
     timestamp: new Date().toISOString(),
     userFriendly: true
   }
@@ -86,46 +87,46 @@ export function createSecureError(
 export function handleApiError(error: any): SecureError {
   // Supabase errors
   if (error?.code === 'PGRST301') {
-    return createSecureError(ErrorCodes.NOT_FOUND, error)
+    return createSecureError('NOT_FOUND', error)
   }
   
   if (error?.code === '23505') { // Unique constraint violation
-    return createSecureError(ErrorCodes.ALREADY_EXISTS, error)
+    return createSecureError('ALREADY_EXISTS', error)
   }
   
   if (error?.code === '42501') { // Insufficient privilege
-    return createSecureError(ErrorCodes.FORBIDDEN, error)
+    return createSecureError('FORBIDDEN', error)
   }
   
   // HTTP status codes
   if (error?.status === 401 || error?.status === 403) {
-    return createSecureError(ErrorCodes.UNAUTHORIZED, error)
+    return createSecureError('UNAUTHORIZED', error)
   }
   
   if (error?.status === 404) {
-    return createSecureError(ErrorCodes.NOT_FOUND, error)
+    return createSecureError('NOT_FOUND', error)
   }
   
   if (error?.status === 429) {
-    return createSecureError(ErrorCodes.RATE_LIMITED, error)
+    return createSecureError('RATE_LIMITED', error)
   }
   
   if (error?.status >= 500) {
-    return createSecureError(ErrorCodes.SERVICE_UNAVAILABLE, error)
+    return createSecureError('SERVICE_UNAVAILABLE', error)
   }
   
   // OpenRouter specific errors
   if (error?.message?.includes('API key') || error?.message?.includes('authentication')) {
-    return createSecureError(ErrorCodes.API_ERROR, error)
+    return createSecureError('API_ERROR', error)
   }
   
   // Network errors
   if (error?.message?.includes('fetch') || error?.message?.includes('network')) {
-    return createSecureError(ErrorCodes.SERVICE_UNAVAILABLE, error)
+    return createSecureError('SERVICE_UNAVAILABLE', error)
   }
   
   // Default to unknown error
-  return createSecureError(ErrorCodes.UNKNOWN_ERROR, error)
+  return createSecureError('UNKNOWN_ERROR', error)
 }
 
 // Handle validation errors
@@ -133,18 +134,18 @@ export function handleValidationError(validationResult: { errors: string[] }): S
   const message = validationResult.errors.join(', ')
   
   if (validationResult.errors.some(error => error.includes('required'))) {
-    return createSecureError(ErrorCodes.MISSING_REQUIRED_FIELD, message)
+    return createSecureError('MISSING_REQUIRED_FIELD', message)
   }
   
   if (validationResult.errors.some(error => error.includes('too long') || error.includes('length'))) {
-    return createSecureError(ErrorCodes.INPUT_TOO_LONG, message)
+    return createSecureError('INPUT_TOO_LONG', message)
   }
   
   if (validationResult.errors.some(error => error.includes('format') || error.includes('invalid'))) {
-    return createSecureError(ErrorCodes.INVALID_FORMAT, message)
+    return createSecureError('INVALID_FORMAT', message)
   }
   
-  return createSecureError(ErrorCodes.INVALID_INPUT, message)
+  return createSecureError('INVALID_INPUT', message)
 }
 
 // Sanitize error for client display
@@ -228,7 +229,7 @@ export function checkRateLimit(userId: string): SecureError | null {
   if (!globalRateLimiter.isAllowed(userId)) {
     const remainingTime = Math.ceil(globalRateLimiter.getRemainingTime(userId) / 1000 / 60)
     return {
-      ...createSecureError(ErrorCodes.RATE_LIMITED),
+      ...createSecureError('RATE_LIMITED'),
       message: `Too many requests. Please try again in ${remainingTime} minutes.`
     }
   }
