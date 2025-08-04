@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { validateTemplateData } from '@/lib/validation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -75,6 +76,22 @@ export default function CreateTemplate() {
     setError('')
 
     try {
+      // Validate and sanitize input data
+      const validation = validateTemplateData({
+        name: formData.name,
+        category: formData.category,
+        disc_type: formData.disc_type,
+        template_content: formData.template_content,
+        description: formData.description
+      })
+
+      if (!validation.isValid) {
+        setError(`Please fix the following issues: ${validation.errors.join(', ')}`)
+        return
+      }
+
+      const sanitizedData = validation.sanitizedData
+
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         setError('You must be logged in to create a template')
@@ -85,11 +102,11 @@ export default function CreateTemplate() {
         .from('communication_templates')
         .insert({
           user_id: user.id,
-          name: formData.name,
-          category: formData.category,
-          disc_type: formData.disc_type,
-          template_content: formData.template_content,
-          description: formData.description,
+          name: sanitizedData.name,
+          category: sanitizedData.category,
+          disc_type: sanitizedData.disc_type,
+          template_content: sanitizedData.template_content,
+          description: sanitizedData.description,
           variables: variables
         })
 

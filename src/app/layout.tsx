@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import ErrorBoundary from '@/components/error-boundary'
 
 export const metadata: Metadata = {
-  title: 'Crystal Knows Clone',
-  description: 'Personality insights platform',
+  title: 'PersonaFlow',
+  description: 'AI-powered personality insights for better communication',
 }
 
 export default function RootLayout({
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
       </body>
     </html>
   )

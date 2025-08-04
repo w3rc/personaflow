@@ -305,7 +305,7 @@ export default async function UpgradePage() {
         <div className="mt-8 text-center">
           <p className="text-muted-foreground">
             Need help choosing the right plan? {' '}
-            <Link href="mailto:support@crystalknows-clone.com" className="text-blue-600 hover:underline">
+            <Link href="mailto:support@personaflow.com" className="text-blue-600 hover:underline">
               Contact our sales team
             </Link>
           </p>

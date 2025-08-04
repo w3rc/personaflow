@@ -11,7 +11,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Crystal Knows Clone</h1>
+              <h1 className="text-2xl font-bold text-gray-900">PersonaFlow</h1>
             </div>
             <nav className="flex space-x-4">
               <Link href="/auth/login">
@@ -30,12 +30,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-5xl font-bold text-gray-900 mb-6">
-              Unlock the Power of 
-              <span className="text-blue-600"> Personality Insights</span>
+              Transform Communication with 
+              <span className="text-blue-600"> AI-Powered Insights</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Analyze personality types using the DISC framework to improve communication, 
-              build better relationships, and achieve more successful outcomes.
+              Analyze personality patterns using advanced DISC framework and AI to optimize 
+              your communication style, build stronger relationships, and achieve breakthrough results.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/auth/signup">
@@ -220,9 +220,9 @@ export default function Home() {
       <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h3 className="text-2xl font-bold mb-4">Crystal Knows Clone</h3>
+            <h3 className="text-2xl font-bold mb-4">PersonaFlow</h3>
             <p className="text-gray-400 mb-4">
-              Personality insights platform for better communication
+              AI-powered personality insights for better communication
             </p>
             <div className="flex justify-center space-x-6">
               <Link href="/auth/login" className="text-gray-400 hover:text-white">

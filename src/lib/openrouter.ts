@@ -108,7 +108,7 @@ Return only valid JSON with no additional text.`
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-          'X-Title': 'Crystal Knows Clone'
+          'X-Title': 'PersonaFlow'
         },
         timeout: 30000
       }

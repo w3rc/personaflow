@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { analyzePersonalityWithAI } from '@/lib/openrouter'
 import { createClient } from '@/lib/supabase/server'
+import { validateAnalysisText } from '@/lib/validation'
+import { createErrorResponse, handleValidationError, checkRateLimit, logError } from '@/lib/error-handling'
 
 interface AnalysisRequest {
   text: string
@@ -124,30 +126,34 @@ export async function POST(request: NextRequest) {
     const body: AnalysisRequest = await request.json()
     const { text, userId } = body
 
-    // Validate input
-    if (!text || !userId) {
-      return NextResponse.json(
-        { error: 'Missing required fields: text and userId' },
-        { status: 400 }
-      )
+    // Check rate limiting
+    const rateLimitError = checkRateLimit(userId)
+    if (rateLimitError) {
+      return createErrorResponse(rateLimitError, 429)
     }
 
-    if (text.length < 10) {
-      return NextResponse.json(
-        { error: 'Text must be at least 10 characters long for analysis' },
-        { status: 400 }
-      )
+    // Validate input
+    if (!text || !userId) {
+      const validationError = handleValidationError({ errors: ['Missing required fields: text and userId'] })
+      return createErrorResponse(validationError)
     }
+
+    // Validate and sanitize analysis text
+    const textValidation = validateAnalysisText(text)
+    if (!textValidation.isValid) {
+      const validationError = handleValidationError(textValidation)
+      return createErrorResponse(validationError)
+    }
+
+    const sanitizedText = textValidation.sanitizedValue!
 
     // Verify user authentication
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user || user.id !== userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      const authError = handleValidationError({ errors: ['Unauthorized access'] })
+      return createErrorResponse(authError, 401)
     }
 
     // Check user's subscription limits (optional)
@@ -166,23 +172,21 @@ export async function POST(request: NextRequest) {
     const limit = subscription?.monthly_profile_limit || 5
 
     if (profilesUsed >= limit) {
-      return NextResponse.json(
-        { error: 'Monthly profile limit reached. Please upgrade your plan.' },
-        { status: 429 }
-      )
+      const limitError = handleValidationError({ errors: ['Monthly profile limit reached. Please upgrade your plan.'] })
+      return createErrorResponse(limitError, 429)
     }
 
     let analysis: PersonalityAnalysis
 
     try {
-      // Try AI analysis first
+      // Try AI analysis first with sanitized text
       console.log('Attempting AI analysis for user:', userId)
-      analysis = await analyzePersonalityWithAI(text)
+      analysis = await analyzePersonalityWithAI(sanitizedText)
       console.log('AI analysis successful')
     } catch (aiError) {
       console.error('AI analysis failed, using fallback:', aiError)
-      // Fallback to basic analysis
-      analysis = getBasicAnalysis(text)
+      // Fallback to basic analysis with sanitized text
+      analysis = getBasicAnalysis(sanitizedText)
     }
 
     return NextResponse.json({
@@ -192,9 +196,8 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Analysis API error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error during analysis' },
-      { status: 500 }
-    )
+    const serverError = handleValidationError({ errors: ['Internal server error during analysis'] })
+    logError(serverError, { userId, requestUrl: request.url })
+    return createErrorResponse(serverError, 500)
   }
 }

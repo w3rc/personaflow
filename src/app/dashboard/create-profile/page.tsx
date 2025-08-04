@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { validateProfileData } from '@/lib/validation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -166,6 +167,21 @@ export default function CreateProfile() {
     setError('')
 
     try {
+      // Validate and sanitize input data
+      const validation = validateProfileData({
+        targetName: formData.targetName,
+        targetEmail: formData.targetEmail,
+        targetLinkedin: formData.targetLinkedin,
+        analysisText: formData.analysisText
+      })
+
+      if (!validation.isValid) {
+        setError(`Please fix the following issues: ${validation.errors.join(', ')}`)
+        return
+      }
+
+      const sanitizedData = validation.sanitizedData
+
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         setError('You must be logged in to create a profile')
@@ -192,17 +208,17 @@ export default function CreateProfile() {
         return
       }
 
-      // Analyze personality with AI
-      const analysis = await analyzePersonality(formData.analysisText, user.id)
+      // Analyze personality with AI using sanitized text
+      const analysis = await analyzePersonality(sanitizedData.analysisText, user.id)
 
       // Create profile
       const { data: profile, error: profileError } = await supabase
         .from('personality_profiles')
         .insert({
           user_id: user.id,
-          target_name: formData.targetName,
-          target_email: formData.targetEmail || null,
-          target_linkedin: formData.targetLinkedin || null,
+          target_name: sanitizedData.targetName,
+          target_email: sanitizedData.targetEmail || null,
+          target_linkedin: sanitizedData.targetLinkedin || null,
           disc_type: analysis.disc_type,
           disc_scores: analysis.disc_scores,
           personality_insights: analysis.personality_insights,
@@ -230,7 +246,7 @@ export default function CreateProfile() {
           user_id: user.id,
           action: 'profile_created',
           resource_id: profile.id,
-          metadata: { target_name: formData.targetName }
+          metadata: { target_name: sanitizedData.targetName }
         })
 
       router.push(`/dashboard/profiles/${profile.id}`)

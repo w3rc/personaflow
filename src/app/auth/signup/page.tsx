@@ -45,7 +45,7 @@ export default function Signup() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
-          <p className="text-gray-600 mt-2">Get started with Crystal Knows Clone</p>
+          <p className="text-gray-600 mt-2">Get started with PersonaFlow</p>
         </div>
 
         <form onSubmit={handleSignup} className="space-y-6">

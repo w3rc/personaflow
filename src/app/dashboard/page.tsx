@@ -43,7 +43,7 @@ export default async function Dashboard() {
       <div className="border-b">
         <div className="flex h-16 items-center px-4 md:px-6">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold">Crystal Knows Clone</h1>
+            <h1 className="text-2xl font-bold">PersonaFlow</h1>
           </div>
           <div className="ml-auto flex items-center space-x-4">
             <span className="text-sm text-muted-foreground">Welcome, {user.email}</span>
