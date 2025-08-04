@@ -55,8 +55,7 @@ function WritingAssistantContent() {
 
   const loadTemplate = async (id: string) => {
     try {
-      // In a real app, you'd also fetch from database
-      // For now, we'll use the default templates from the previous page
+      // Default templates
       const defaultTemplates = [
         {
           id: 'default-1',
@@ -76,16 +75,54 @@ I know your time is valuable. Can we schedule a 15-minute call this week to disc
 
 Best regards,
 [YOUR_NAME]`,
-          disc_type: 'D'
+          disc_type: 'D',
+          variables: ['NAME', 'COMPANY', 'METRIC', 'PERCENTAGE', 'TIMEFRAME', 'BENEFIT_1', 'BENEFIT_2', 'BENEFIT_3', 'YOUR_NAME']
+        },
+        {
+          id: 'default-2',
+          name: 'Follow-up Email - I Type',
+          template_content: `Subject: Great meeting you at [EVENT]! 🎉
+
+Hi [NAME]!
+
+It was fantastic meeting you at [EVENT] yesterday! I really enjoyed our conversation about [TOPIC] - your insights were incredibly valuable.
+
+As promised, I'm attaching [RESOURCE] that we discussed. I think you'll find it really helpful for [USE_CASE].
+
+I'd love to continue our conversation over coffee sometime. Are you free next week for a quick chat? I have some exciting ideas I'd love to share with you!
+
+Looking forward to hearing from you!
+
+Cheers,
+[YOUR_NAME]
+
+P.S. Congratulations again on [ACHIEVEMENT]! 🎊`,
+          disc_type: 'I',
+          variables: ['NAME', 'EVENT', 'TOPIC', 'RESOURCE', 'USE_CASE', 'ACHIEVEMENT', 'YOUR_NAME']
         }
-        // Add other templates as needed
       ]
 
-      const foundTemplate = defaultTemplates.find(t => t.id === id)
+      // Check if it's a default template first
+      let foundTemplate = defaultTemplates.find(t => t.id === id)
+      
+      // If not found in defaults, try to fetch from database
+      if (!foundTemplate) {
+        const { data, error } = await supabase
+          .from('communication_templates')
+          .select('*')
+          .eq('id', id)
+          .single()
+        
+        if (!error && data) {
+          foundTemplate = data
+        }
+      }
+
       if (foundTemplate) {
         setTemplate(foundTemplate)
         setMessage(foundTemplate.template_content)
-        setSubject(foundTemplate.template_content.split('\n')[0].replace('Subject: ', ''))
+        const subjectLine = foundTemplate.template_content.split('\n')[0]
+        setSubject(subjectLine.startsWith('Subject: ') ? subjectLine.replace('Subject: ', '') : subjectLine)
       }
     } catch (err: any) {
       setError('Failed to load template')
