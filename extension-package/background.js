@@ -77,37 +77,6 @@ async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Alternative authentication check - try to access a protected endpoint
-async function checkAuthAlternative() {
-  try {
-    logInfo('Auth-Alt', 'Trying alternative authentication check...');
-    const apiUrl = getAPIBaseURL();
-    
-    // Try to access the profiles endpoint which requires authentication
-    const response = await fetch(`${apiUrl}/api/profiles?limit=1`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-    
-    logInfo('Auth-Alt', `Profiles endpoint status: ${response.status}`);
-    
-    if (response.ok) {
-      // If we can access profiles, we're authenticated
-      return { success: true, user: { authenticated: true } };
-    } else if (response.status === 401) {
-      return { success: false, error: 'User not authenticated' };
-    } else {
-      return { success: false, error: `Service error: ${response.status}` };
-    }
-  } catch (error) {
-    logError('Auth-Alt', error);
-    return { success: false, error: error.message };
-  }
-}
-
 // Authentication Functions
 async function checkUserAuthentication() {
   try {
@@ -118,10 +87,7 @@ async function checkUserAuthentication() {
       await detectEnvironment();
     }
     
-    const apiUrl = getAPIBaseURL();
-    logInfo('Auth', `Using API URL: ${apiUrl}`);
-    
-    const response = await fetch(`${apiUrl}/api/auth/user`, {
+    const response = await fetch(`${getAPIBaseURL()}/api/auth/user`, {
       method: 'GET',
       credentials: 'include', // Include cookies
       headers: {
@@ -129,28 +95,7 @@ async function checkUserAuthentication() {
       }
     });
 
-    logInfo('Auth', `Response status: ${response.status}`);
-    logInfo('Auth', `Response URL: ${response.url}`);
-    
-    // Check if we got HTML instead of JSON (indicates redirect or error page)
-    const contentType = response.headers.get('content-type');
-    logInfo('Auth', `Content-Type: ${contentType}`);
-    
-    if (!response.ok) {
-      logError('Auth', `HTTP ${response.status}: ${response.statusText}`);
-      return { success: false, error: `Authentication service unavailable (${response.status})` };
-    }
-    
-    // Check if response is JSON
-    if (!contentType || !contentType.includes('application/json')) {
-      const textResponse = await response.text();
-      logError('Auth', `Expected JSON but got: ${contentType}`);
-      logError('Auth', `Response preview: ${textResponse.substring(0, 200)}...`);
-      return { success: false, error: 'Invalid response from authentication service' };
-    }
-    
     const result = await response.json();
-    logInfo('Auth', `Response body: ${JSON.stringify(result)}`);
     
     if (result.authenticated && result.user) {
       currentUser = result.user;
@@ -158,25 +103,13 @@ async function checkUserAuthentication() {
       return { success: true, user: result.user };
     } else {
       currentUser = null;
-      logInfo('Auth', `Authentication failed: ${result.message || 'User not authenticated'}`);
-      return { success: false, error: result.message || 'User not authenticated' };
+      logInfo('Auth', 'User not authenticated');
+      return { success: false, error: 'User not authenticated' };
     }
   } catch (error) {
-    logError('Auth', `Primary authentication failed: ${error.message}`);
-    
-    // Try alternative authentication method
-    logInfo('Auth', 'Trying alternative authentication...');
-    const altResult = await checkAuthAlternative();
-    
-    if (altResult.success) {
-      currentUser = altResult.user;
-      logInfo('Auth', 'Alternative authentication successful');
-      return altResult;
-    } else {
-      logError('Auth', `All authentication methods failed`);
-      currentUser = null;
-      return { success: false, error: 'Unable to verify authentication' };
-    }
+    logError('Auth', error);
+    currentUser = null;
+    return { success: false, error: error.message };
   }
 }
 
