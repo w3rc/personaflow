@@ -107,7 +107,7 @@ export default async function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader>
               <CardTitle>Create New Profile</CardTitle>
@@ -120,6 +120,23 @@ export default async function Dashboard() {
                 <Button className="w-full">
                   <Plus className="mr-2 h-4 w-4" />
                   Create Profile
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile Insights</CardTitle>
+              <CardDescription>
+                Track progress and unlock achievements
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/dashboard/profile-insights">
+                <Button variant="outline" className="w-full">
+                  <TrendingUp className="mr-2 h-4 w-4" />
+                  View Insights
                 </Button>
               </Link>
             </CardContent>
