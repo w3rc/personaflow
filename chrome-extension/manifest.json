@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Crystal Knows LinkedIn Extractor",
+  "version": "1.0.0",
+  "description": "Extract LinkedIn profile data for personality analysis",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.linkedin.com/*",
+    "http://localhost:3000/*",
+    "https://crystalknows-clone.vercel.app/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.linkedin.com/in/*",
+        "https://www.linkedin.com/company/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Extract LinkedIn Data"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["content.css"],
+      "matches": ["https://www.linkedin.com/*"]
+    }
+  ]
+}

@@ -18,13 +18,30 @@ export default async function ProfilesPage() {
     redirect('/auth/login')
   }
 
-  // Get user's profiles with pagination
-  const { data: profiles, error } = await supabase
+  // Get user's own profiles
+  const { data: userProfiles, error: userError } = await supabase
     .from('personality_profiles')
-    .select('id, target_name, target_email, disc_type, confidence_score, created_at, data_sources')
+    .select('id, target_name, target_email, disc_type, confidence_score, created_at, data_sources, user_id')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
     .limit(50)
+
+  // Get extension profiles via API
+  let extensionProfiles = []
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://crystalknows-clone.vercel.app'}/api/profiles?source=linkedin_extension&limit=50`)
+    const extensionData = await response.json()
+    if (extensionData.success) {
+      extensionProfiles = extensionData.profiles
+    }
+  } catch (e) {
+    console.error('Failed to fetch extension profiles:', e)
+  }
+
+  // Combine and sort profiles
+  const allProfiles = [...(userProfiles || []), ...extensionProfiles]
+  const profiles = allProfiles.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  const error = userError
 
   const profileCount = profiles?.length || 0
 
@@ -146,7 +163,14 @@ export default async function ProfilesPage() {
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-lg truncate">{profile.target_name}</CardTitle>
+                        <div className="flex items-center gap-2">
+                          <CardTitle className="text-lg truncate">{profile.target_name}</CardTitle>
+                          {profile.user_id === null && (
+                            <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                              Extension
+                            </Badge>
+                          )}
+                        </div>
                         {profile.target_email && (
                           <CardDescription className="truncate">{profile.target_email}</CardDescription>
                         )}

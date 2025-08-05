@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { ArrowLeft, Mail, Linkedin, Calendar, TrendingUp } from 'lucide-react'
 
@@ -21,14 +22,22 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     redirect('/auth/login')
   }
 
-  const { data: profile, error } = await supabase
-    .from('personality_profiles')
-    .select('*')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
-
-  if (error || !profile) {
+  // Get profile via API (handles both user and extension profiles)
+  let profile = null
+  let profileSource = 'unknown'
+  
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://crystalknows-clone.vercel.app'}/api/profiles/${id}`)
+    const profileData = await response.json()
+    
+    if (profileData.success) {
+      profile = profileData.profile
+      profileSource = profileData.source
+    } else {
+      notFound()
+    }
+  } catch (error) {
+    console.error('Failed to fetch profile:', error)
     notFound()
   }
 
@@ -75,7 +84,14 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         <div className="mb-8">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold">{profile.target_name}</h1>
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-3xl font-bold">{profile.target_name}</h1>
+                {profileSource === 'extension' && (
+                  <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                    Extension Profile
+                  </Badge>
+                )}
+              </div>
               <div className="flex items-center space-x-4 mt-2 text-muted-foreground">
                 {profile.target_email && (
                   <div className="flex items-center space-x-1">

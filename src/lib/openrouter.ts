@@ -107,7 +107,7 @@ Return only valid JSON with no additional text.`
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+          'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://crystalknows-clone.vercel.app',
           'X-Title': 'PersonaFlow'
         },
         timeout: 30000
