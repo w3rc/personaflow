@@ -60,6 +60,28 @@
             border: 2px solid rgba(239, 68, 68, 0.5);
         }
 
+        .status.authenticated {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid rgba(34, 197, 94, 0.5);
+        }
+
+        .status.unauthenticated {
+            background: rgba(251, 191, 36, 0.2);
+            border: 2px solid rgba(251, 191, 36, 0.5);
+        }
+
+        .auth-info {
+            font-size: 12px;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        .login-link {
+            color: white;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
         .profile-preview {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
@@ -168,6 +190,13 @@
     </div>
 
     <div class="content">
+        <div class="status detecting" id="auth-status">
+            <div id="auth-content">
+                <div class="loading"></div>
+                Checking authentication...
+            </div>
+        </div>
+        
         <div class="status detecting" id="status">
             <div id="status-content">
                 <div class="loading"></div>

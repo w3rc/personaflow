@@ -29,6 +29,7 @@ interface ProfileData {
 interface CreateProfileRequest {
   name: string
   data: ProfileData
+  userId?: string // Optional user ID from extension
 }
 
 // Generate analysis text from LinkedIn data
@@ -81,7 +82,7 @@ function generateAnalysisText(data: ProfileData): string {
 export async function POST(request: NextRequest) {
   try {
     const body: CreateProfileRequest = await request.json()
-    const { name, data } = body
+    const { name, data, userId } = body
 
     // Validate required fields
     if (!name || !data) {
@@ -95,18 +96,38 @@ export async function POST(request: NextRequest) {
     // since LinkedIn names can contain emojis, numbers, and special characters
     const sanitizedName = name.trim().substring(0, 200) // Just basic length limit
 
-    // For extension requests, we need to use service role to bypass RLS
-    // since these are anonymous profiles not tied to authenticated users
-    const supabase = createServiceClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
+    // Check if this is an authenticated extension request
+    let authenticatedUserId = null
+    let supabase
+
+    if (userId) {
+      // Verify user authentication via cookies
+      const authSupabase = await createClient()
+      const { data: { user }, error: authError } = await authSupabase.auth.getUser()
+      
+      if (user && user.id === userId) {
+        // User is authenticated and IDs match
+        authenticatedUserId = user.id
+        supabase = authSupabase // Use authenticated client
+      } else {
+        const authError = handleValidationError({ 
+          errors: ['User authentication required for profile creation'] 
+        })
+        return createErrorResponse(authError, 401)
       }
-    )
+    } else {
+      // Fallback to service role for backwards compatibility
+      supabase = createServiceClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false
+          }
+        }
+      )
+    }
 
     // Generate analysis text from LinkedIn data
     const analysisText = generateAnalysisText(data)
@@ -142,12 +163,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // For extension profiles, create directly in personality_profiles table
-    // since these are anonymous profiles not tied to authenticated users
+    // Create profile in personality_profiles table
+    // Use authenticated user ID if available, otherwise null for backwards compatibility
     const { data: personalityProfile, error: personalityError } = await supabase
       .from('personality_profiles')
       .insert({
-        user_id: null, // Extension profiles don't have user_id
+        user_id: authenticatedUserId, // Use authenticated user ID or null
         target_name: sanitizedName,
         target_linkedin: data.url,
         disc_type: personalityAnalysis.disc_type,
@@ -179,8 +200,8 @@ export async function POST(request: NextRequest) {
     await supabase
       .from('usage_logs')
       .insert({
-        action: 'profile_creation_extension',
-        user_id: null, // Extension profiles don't have user_id initially
+        action: authenticatedUserId ? 'profile_creation_extension_auth' : 'profile_creation_extension',
+        user_id: authenticatedUserId, // Use authenticated user ID if available
         resource_id: personalityProfile.id,
         metadata: {
           source: data.source,

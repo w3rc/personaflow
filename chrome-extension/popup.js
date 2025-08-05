@@ -1,18 +1,79 @@
 class PopupController {
     constructor() {
         this.currentProfileData = null;
+        this.currentUser = null;
         this.init();
     }
 
     init() {
         this.setupEventListeners();
-        this.checkCurrentTab();
+        this.checkAuthentication();
     }
 
     setupEventListeners() {
         document.getElementById('extract-btn').addEventListener('click', () => this.extractProfile());
         document.getElementById('analyze-btn').addEventListener('click', () => this.sendToAnalysis());
         document.getElementById('export-btn').addEventListener('click', () => this.exportData());
+    }
+
+    async checkAuthentication() {
+        try {
+            console.log('🔐 Checking user authentication...');
+            const response = await chrome.runtime.sendMessage({ action: 'checkAuth' });
+            console.log('🔐 Auth response:', response);
+            
+            if (response && response.success && response.user) {
+                this.currentUser = response.user;
+                this.updateAuthStatus('authenticated', `✅ Signed in as ${response.user.email}`);
+                // Now check the current tab
+                this.checkCurrentTab();
+            } else {
+                this.currentUser = null;
+                this.updateAuthStatus('unauthenticated', 
+                    '⚠️ Please sign in to PersonaFlow', 
+                    'Click here to sign in', 
+                    () => this.openLoginPage()
+                );
+                // Still check tab but disable extraction
+                this.checkCurrentTab();
+            }
+        } catch (error) {
+            console.error('🔐 Auth check error:', error);
+            this.updateAuthStatus('error', '❌ Authentication check failed');
+        }
+    }
+
+    updateAuthStatus(status, message, linkText = null, linkAction = null) {
+        const authStatus = document.getElementById('auth-status');
+        const authContent = document.getElementById('auth-content');
+        
+        authStatus.className = `status ${status}`;
+        
+        let html = message;
+        if (linkText && linkAction) {
+            html += `<div class="auth-info"><span class="login-link">${linkText}</span></div>`;
+        }
+        
+        authContent.innerHTML = html;
+        
+        if (linkAction) {
+            const link = authContent.querySelector('.login-link');
+            if (link) {
+                link.addEventListener('click', linkAction);
+            }
+        }
+    }
+
+    async openLoginPage() {
+        // Get the current API URL from background script
+        try {
+            const response = await chrome.runtime.sendMessage({ action: 'getAPIUrl' });
+            const baseUrl = response?.url || 'http://localhost:3000';
+            chrome.tabs.create({ url: `${baseUrl}/auth/login` });
+        } catch (error) {
+            // Fallback to localhost if background script fails
+            chrome.tabs.create({ url: 'http://localhost:3000/auth/login' });
+        }
     }
 
     async checkCurrentTab() {
@@ -30,14 +91,16 @@ class PopupController {
                     const response = await chrome.tabs.sendMessage(tab.id, { action: 'ping' });
                     console.log('📥 Content script response:', response);
                     this.updateStatus('ready', '✅ LinkedIn profile detected');
-                    document.getElementById('extract-btn').disabled = false;
+                    // Only enable extraction if user is authenticated
+                    document.getElementById('extract-btn').disabled = !this.currentUser;
                 } catch (contentError) {
                     console.log('⚠️ Content script not ready, injecting...', contentError);
                     
                     // Content script not ready, inject it
                     await this.injectContentScript(tab.id);
                     this.updateStatus('ready', '✅ LinkedIn profile detected (script injected)');
-                    document.getElementById('extract-btn').disabled = false;
+                    // Only enable extraction if user is authenticated
+                    document.getElementById('extract-btn').disabled = !this.currentUser;
                 }
             } else if (tab.url && tab.url.includes('linkedin.com')) {
                 console.log('⚠️ On LinkedIn but not profile page');

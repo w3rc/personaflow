@@ -10,8 +10,9 @@ interface ProfilePageProps {
   params: Promise<{ id: string }>
 }
 
-export default async function ProfilePage({ params }: ProfilePageProps) {
-  const { id } = await params
+export default async function ProfilePage(props: ProfilePageProps) {
+  const params = await props.params
+  const { id } = params
   const supabase = await createClient()
   
   const {
@@ -22,22 +23,49 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     redirect('/auth/login')
   }
 
-  // Get profile via API (handles both user and extension profiles)
+  // Get profile - check both user profiles and extension profiles
   let profile = null
   let profileSource = 'unknown'
   
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://crystalknows-clone.vercel.app'}/api/profiles/${id}`)
-    const profileData = await response.json()
-    
-    if (profileData.success) {
-      profile = profileData.profile
-      profileSource = profileData.source
-    } else {
-      notFound()
+  // First try to get user's own profile
+  const { data: userProfile } = await supabase
+    .from('personality_profiles')
+    .select('*')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single()
+
+  if (userProfile) {
+    profile = userProfile
+    profileSource = 'user'
+  } else {
+    // If not found as user profile, try extension profiles using service role
+    const { createClient: createServiceClient } = await import('@supabase/supabase-js')
+    const serviceSupabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
+    const { data: extensionProfile } = await serviceSupabase
+      .from('personality_profiles')
+      .select('*')
+      .eq('id', id)
+      .is('user_id', null)
+      .single()
+
+    if (extensionProfile) {
+      profile = extensionProfile
+      profileSource = 'extension'
     }
-  } catch (error) {
-    console.error('Failed to fetch profile:', error)
+  }
+
+  if (!profile) {
     notFound()
   }
 

@@ -5,13 +5,50 @@ console.log('🚀 PersonaFlow LinkedIn Extractor - Background Script Starting');
 
 // Configuration
 const CONFIG = {
-  API_BASE_URL: 'https://crystalknows-clone.vercel.app',
+  PRODUCTION_URL: 'https://crystalknows-clone.vercel.app',
+  DEVELOPMENT_URLS: ['http://localhost:3001', 'http://localhost:3000'],
   MAX_RETRIES: 3,
-  RETRY_DELAY: 1000
+  RETRY_DELAY: 1000,
+  currentAPI: null // Will be set dynamically
 };
+
+// Environment detection function
+async function detectEnvironment() {
+  logInfo('Environment', 'Detecting available API environment...');
+  
+  // Try development URLs first (localhost:3001, then localhost:3000)
+  for (const devUrl of CONFIG.DEVELOPMENT_URLS) {
+    try {
+      logInfo('Environment', `Trying development API: ${devUrl}`);
+      const response = await fetch(`${devUrl}/api/auth/user`, {
+        method: 'GET',
+        credentials: 'include',
+        signal: AbortSignal.timeout(3000) // 3 second timeout
+      });
+      
+      // If we can reach this localhost, use it
+      CONFIG.currentAPI = devUrl;
+      logInfo('Environment', `Using development API: ${CONFIG.currentAPI}`);
+      return CONFIG.currentAPI;
+    } catch (error) {
+      logInfo('Environment', `Development API ${devUrl} not available`);
+    }
+  }
+  
+  // If all localhost attempts fail, use production
+  CONFIG.currentAPI = CONFIG.PRODUCTION_URL;
+  logInfo('Environment', `Using production API: ${CONFIG.currentAPI}`);
+  return CONFIG.currentAPI;
+}
+
+// Get current API URL (with fallback)
+function getAPIBaseURL() {
+  return CONFIG.currentAPI || CONFIG.DEVELOPMENT_URLS[0];
+}
 
 // State management
 let isInitialized = false;
+let currentUser = null;
 
 // Utility Functions
 function logError(context, error) {
@@ -26,20 +63,68 @@ async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Authentication Functions
+async function checkUserAuthentication() {
+  try {
+    logInfo('Auth', 'Checking user authentication...');
+    
+    // Ensure we have detected the environment
+    if (!CONFIG.currentAPI) {
+      await detectEnvironment();
+    }
+    
+    const response = await fetch(`${getAPIBaseURL()}/api/auth/user`, {
+      method: 'GET',
+      credentials: 'include', // Include cookies
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    const result = await response.json();
+    
+    if (result.authenticated && result.user) {
+      currentUser = result.user;
+      logInfo('Auth', `User authenticated: ${result.user.email}`);
+      return { success: true, user: result.user };
+    } else {
+      currentUser = null;
+      logInfo('Auth', 'User not authenticated');
+      return { success: false, error: 'User not authenticated' };
+    }
+  } catch (error) {
+    logError('Auth', error);
+    currentUser = null;
+    return { success: false, error: error.message };
+  }
+}
+
+async function requireAuthentication() {
+  const authResult = await checkUserAuthentication();
+  if (!authResult.success) {
+    const currentURL = getAPIBaseURL();
+    throw new Error(`User must be signed in to PersonaFlow to use this extension. Please visit ${currentURL} and sign in.`);
+  }
+  return authResult.user;
+}
+
 // API Communication Functions
-async function sendToCrystalAPI(analysisData) {
+async function sendToCrystalAPI(analysisData, user) {
   try {
     logInfo('API', 'Sending profile to PersonaFlow API...');
     console.log('Analysis data:', analysisData);
+    console.log('User context:', user);
     
-    const response = await fetch(`${CONFIG.API_BASE_URL}/api/profiles`, {
+    const response = await fetch(`${getAPIBaseURL()}/api/profiles`, {
       method: 'POST',
+      credentials: 'include', // Include cookies for authentication
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         name: analysisData.name,
-        data: analysisData
+        data: analysisData,
+        userId: user.id // Pass user ID for proper association
       })
     });
 
@@ -53,14 +138,14 @@ async function sendToCrystalAPI(analysisData) {
     return {
       success: true,
       data: result,
-      profileUrl: `${CONFIG.API_BASE_URL}/dashboard/profiles/${result.id}?source=extension`
+      profileUrl: `${getAPIBaseURL()}/dashboard/profiles/${result.id}?source=extension`
     };
   } catch (error) {
     logError('API', error);
     return {
       success: false,
       error: error.message,
-      profileUrl: `${CONFIG.API_BASE_URL}/dashboard/create-profile`
+      profileUrl: `${getAPIBaseURL()}/dashboard/create-profile`
     };
   }
 }
@@ -125,8 +210,11 @@ async function handleAnalyzeProfile(data) {
   logInfo('Handler', 'Starting profile analysis');
   
   try {
+    // Check authentication before proceeding
+    const user = await requireAuthentication();
+    
     const analysisData = prepareAnalysisData(data);
-    const response = await sendToCrystalAPI(analysisData);
+    const response = await sendToCrystalAPI(analysisData, user);
     
     if (response.success) {
       // Store analysis result
@@ -175,6 +263,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           
         case 'getStoredProfiles':
           result = await getStoredProfiles();
+          break;
+          
+        case 'checkAuth':
+          result = await checkUserAuthentication();
+          break;
+          
+        case 'getAPIUrl':
+          // Ensure environment is detected
+          if (!CONFIG.currentAPI) {
+            await detectEnvironment();
+          }
+          result = { success: true, url: getAPIBaseURL() };
           break;
           
         case 'ping':

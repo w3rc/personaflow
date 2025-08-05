@@ -18,32 +18,31 @@ export default async function ProfilesPage() {
     redirect('/auth/login')
   }
 
-  // Get user's own profiles
-  const { data: userProfiles, error: userError } = await supabase
+  // Get all user's profiles in one query to avoid duplicates
+  const { data: allUserProfiles, error: userError } = await supabase
     .from('personality_profiles')
     .select('id, target_name, target_email, disc_type, confidence_score, created_at, data_sources, user_id')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
-    .limit(50)
+    .limit(100) // Increased limit since we're getting all profiles
 
-  // Get extension profiles via API
-  let extensionProfiles = []
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://crystalknows-clone.vercel.app'}/api/profiles?source=linkedin_extension&limit=50`)
-    const extensionData = await response.json()
-    if (extensionData.success) {
-      extensionProfiles = extensionData.profiles
-    }
-  } catch (e) {
-    console.error('Failed to fetch extension profiles:', e)
+  // Deduplicate profiles by ID (just in case)
+  const profilesMap = new Map()
+  if (allUserProfiles) {
+    allUserProfiles.forEach(profile => {
+      profilesMap.set(profile.id, profile)
+    })
   }
-
-  // Combine and sort profiles
-  const allProfiles = [...(userProfiles || []), ...extensionProfiles]
-  const profiles = allProfiles.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  
+  const profiles = Array.from(profilesMap.values())
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   const error = userError
 
   const profileCount = profiles?.length || 0
+  
+  // Separate counts for display purposes (optional)
+  const userProfileCount = profiles.filter(p => !p.data_sources?.includes('linkedin_extension')).length
+  const extensionProfileCount = profiles.filter(p => p.data_sources?.includes('linkedin_extension')).length
 
   // Get subscription info
   const { data: subscription } = await supabase
@@ -53,6 +52,7 @@ export default async function ProfilesPage() {
     .single()
 
   const limit = subscription?.monthly_profile_limit || 5
+  // Count all profiles toward usage
   const used = profileCount
 
   const discTypes = [
@@ -165,7 +165,7 @@ export default async function ProfilesPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <CardTitle className="text-lg truncate">{profile.target_name}</CardTitle>
-                          {profile.user_id === null && (
+                          {profile.data_sources?.includes('linkedin_extension') && (
                             <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
                               Extension
                             </Badge>
