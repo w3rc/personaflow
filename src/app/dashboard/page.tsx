@@ -169,19 +169,21 @@ export default async function Dashboard() {
               {profiles.length > 0 ? (
                 <div className="space-y-4">
                   {profiles.slice(0, 5).map((profile) => (
-                    <div key={profile.id} className="flex items-center space-x-4">
-                      <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          {profile.target_name}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {profile.disc_type ? `DISC: ${profile.disc_type}` : 'Analysis pending'}
-                        </p>
+                    <Link key={profile.id} href={`/dashboard/profiles/${profile.id}`}>
+                      <div className="flex items-center space-x-4 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
+                        <div className="flex-1 space-y-1">
+                          <p className="text-sm font-medium leading-none">
+                            {profile.target_name}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {profile.disc_type ? `DISC: ${profile.disc_type}` : 'Analysis pending'}
+                          </p>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {new Date(profile.created_at).toLocaleDateString()}
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(profile.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
+                    </Link>
                   ))}
                   {profiles.length > 5 && (
                     <Link href="/dashboard/profiles">
