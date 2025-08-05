@@ -158,7 +158,7 @@ class PopupController {
         try {
             console.log('🚀 Starting analysis process...');
             analyzeBtn.disabled = true;
-            analyzeBtn.innerHTML = '<div class="loading"></div>Sending to Crystal...';
+            analyzeBtn.innerHTML = '<div class="loading"></div>Sending to PersonaFlow...';
 
             // Test background script connection first
             try {
@@ -182,10 +182,10 @@ class PopupController {
             console.log('📥 Background script response:', response);
 
             if (response && response.success) {
-                this.updateStatus('ready', '✅ Sent to Crystal for analysis');
-                analyzeBtn.innerHTML = '✅ Sent to Crystal';
-                
-                // Open Crystal dashboard in new tab
+                this.updateStatus('ready', '✅ Sent to PersonaFlow for analysis');
+                analyzeBtn.innerHTML = '✅ Sent to PersonaFlow';
+
+                // Open PersonaFlow dashboard in new tab
                 if (response.profileUrl) {
                     chrome.tabs.create({ url: response.profileUrl });
                 }

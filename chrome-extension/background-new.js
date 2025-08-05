@@ -1,7 +1,7 @@
-// Crystal LinkedIn Extractor - Background Script
+// PersonaFlow LinkedIn Extractor - Background Script
 // Properly structured for Chrome Extension Manifest V3
 
-console.log('🚀 Crystal LinkedIn Extractor - Background Script Starting');
+console.log('🚀 PersonaFlow LinkedIn Extractor - Background Script Starting');
 
 // Configuration
 const CONFIG = {
@@ -29,7 +29,7 @@ async function sleep(ms) {
 // API Communication Functions
 async function sendToCrystalAPI(analysisData) {
   try {
-    logInfo('API', 'Sending profile to Crystal API...');
+    logInfo('API', 'Sending profile to PersonaFlow API...');
     console.log('Analysis data:', analysisData);
     
     const response = await fetch(`${CONFIG.API_BASE_URL}/api/profiles`, {

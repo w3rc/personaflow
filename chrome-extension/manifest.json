@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Crystal Knows LinkedIn Extractor",
+  "name": "PersonaFlow LinkedIn Extractor",
   "version": "1.0.0",
   "description": "Extract LinkedIn profile data for personality analysis",
   "permissions": [

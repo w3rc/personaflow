@@ -46,7 +46,7 @@ class LinkedInExtractor {
 
     const button = document.createElement('button');
     button.id = 'crystal-extract-btn';
-    button.innerHTML = '🔍 Extract for Crystal';
+    button.innerHTML = '🔍 Extract for PersonaFlow';
     button.className = 'crystal-extract-button';
     button.onclick = () => this.handleExtractClick();
 
@@ -76,14 +76,14 @@ class LinkedInExtractor {
       // First store the data locally
       await this.sendToBackground({ action: 'profileExtracted', data });
       
-      // Then immediately send for analysis to Crystal API
+      // Then immediately send for analysis to PersonaFlow API
       console.log('📤 Sending profile for analysis...');
       const analysisResult = await this.sendToBackground({ action: 'analyzeProfile', data });
       
       if (button) {
         if (analysisResult && analysisResult.success) {
-          button.innerHTML = '✅ Sent to Crystal!';
-          console.log('🎉 Profile successfully analyzed and sent to Crystal!');
+          button.innerHTML = '✅ Sent to PersonaFlow!';
+          console.log('🎉 Profile successfully analyzed and sent to PersonaFlow!');
           console.log('🔗 View profile:', analysisResult.profileUrl);
         } else {
           button.innerHTML = '⚠️ Extracted (Analysis Failed)';
@@ -91,7 +91,7 @@ class LinkedInExtractor {
         }
         
         setTimeout(() => {
-          button.innerHTML = '🔍 Extract for Crystal';
+          button.innerHTML = '🔍 Extract for PersonaFlow';
           button.disabled = false;
         }, 3000);
       }
@@ -106,7 +106,7 @@ class LinkedInExtractor {
       if (button) {
         button.innerHTML = `❌ Failed: ${error.message}`;
         setTimeout(() => {
-          button.innerHTML = '🔍 Extract for Crystal';
+          button.innerHTML = '🔍 Extract for PersonaFlow';
           button.disabled = false;
         }, 3000);
       }
