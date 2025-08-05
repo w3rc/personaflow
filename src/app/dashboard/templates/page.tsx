@@ -26,6 +26,7 @@ export default async function TemplatesPage() {
 
   // Default templates (these would typically be seeded in the database)
   const defaultTemplates = [
+    // Email Templates
     {
       id: 'default-1',
       name: 'Cold Email - D Type',
@@ -73,122 +74,348 @@ P.S. Congratulations again on [ACHIEVEMENT]! 🎊`,
     },
     {
       id: 'default-3',
-      name: 'Project Update - S Type',
+      name: 'Professional Email - S Type',
       category: 'email',
       disc_type: 'S',
-      template_content: `Subject: Steady progress on [PROJECT_NAME] - Update #[NUMBER]
+      template_content: `Subject: Following up on our discussion about [TOPIC]
 
 Dear [NAME],
 
-I hope this email finds you well. I wanted to provide you with a comprehensive update on our [PROJECT_NAME] project.
+I hope you're having a great week. I wanted to follow up on our conversation about [TOPIC] and share some additional thoughts.
 
-Current Status:
-✅ Completed: [COMPLETED_ITEMS]
-🔄 In Progress: [IN_PROGRESS_ITEMS]
-📅 Upcoming: [UPCOMING_ITEMS]
+I've taken some time to carefully consider what we discussed, and I believe [SOLUTION] could be a great fit for [COMPANY]. Here's what I'm thinking:
 
-We're maintaining our timeline and quality standards. I've been working closely with the team to ensure we address any concerns promptly.
+• [POINT_1] - This aligns well with your current processes
+• [POINT_2] - It provides the stability you mentioned looking for
+• [POINT_3] - Implementation would be gradual and manageable
 
-If you have any questions or need clarification on any aspect, please don't hesitate to reach out. I'm here to support you throughout this process.
+I'd appreciate the opportunity to discuss this further when you have time. Would next week work for a brief conversation? I'm happy to work around your schedule.
 
-Thank you for your continued trust and patience.
+Thank you for your time and consideration.
 
-Best regards,
+Warm regards,
 [YOUR_NAME]`,
-      variables: ['PROJECT_NAME', 'NUMBER', 'NAME', 'COMPLETED_ITEMS', 'IN_PROGRESS_ITEMS', 'UPCOMING_ITEMS', 'YOUR_NAME']
+      variables: ['NAME', 'TOPIC', 'SOLUTION', 'COMPANY', 'POINT_1', 'POINT_2', 'POINT_3', 'YOUR_NAME']
     },
     {
       id: 'default-4',
-      name: 'Detailed Proposal - C Type',
+      name: 'Detailed Email - C Type',
       category: 'email',
       disc_type: 'C',
-      template_content: `Subject: Comprehensive Analysis: [SOLUTION] for [COMPANY]
+      template_content: `Subject: Comprehensive analysis: [SOLUTION] for [COMPANY]
 
 Dear [NAME],
 
-Following our initial discussion, I've conducted a thorough analysis of [COMPANY]'s requirements. Please find below a detailed breakdown of our proposed solution.
+I've completed a thorough analysis of [COMPANY]'s requirements based on our previous discussions. Please find below a detailed overview of how [SOLUTION] addresses your specific needs.
 
-Executive Summary:
-Our analysis indicates that implementing [SOLUTION] will result in:
-• ROI: [ROI_PERCENTAGE]% within [TIMEFRAME]
-• Cost savings: $[AMOUNT] annually
-• Efficiency improvement: [EFFICIENCY]%
+**Current Situation Analysis:**
+• Challenge: [CHALLENGE_1]
+• Impact: [IMPACT_1]
+• Current cost: [CURRENT_COST]
 
-Detailed Methodology:
-1. [STEP_1_DESCRIPTION]
-2. [STEP_2_DESCRIPTION]
-3. [STEP_3_DESCRIPTION]
+**Proposed Solution Details:**
+• Implementation timeline: [TIMELINE]
+• Key features: [FEATURE_1], [FEATURE_2], [FEATURE_3]
+• Expected ROI: [ROI_PERCENTAGE]% within [ROI_TIMEFRAME]
+• Risk mitigation: [RISK_MITIGATION]
 
-Risk Assessment:
-• Low risk: [LOW_RISKS]
-• Medium risk: [MEDIUM_RISKS]
-• Mitigation strategies: [MITIGATION]
+**Supporting Documentation:**
+• Case study: [CASE_STUDY]
+• Technical specifications: [TECH_SPECS]
+• Compliance certifications: [CERTIFICATIONS]
 
-I've attached the complete 15-page analysis document with supporting data, case studies, and implementation timeline.
+I've attached detailed documentation for your review. I'm available to discuss any questions or concerns you may have about the technical aspects or implementation process.
 
-Please review and let me know if you need any additional information or clarification on our methodology.
+Would you prefer a detailed presentation meeting or a comprehensive written proposal as the next step?
 
-Respectfully,
+Best regards,
 [YOUR_NAME]
-
-Attachments: [DOCUMENT_LIST]`,
-      variables: ['SOLUTION', 'COMPANY', 'NAME', 'ROI_PERCENTAGE', 'TIMEFRAME', 'AMOUNT', 'EFFICIENCY', 'STEP_1_DESCRIPTION', 'STEP_2_DESCRIPTION', 'STEP_3_DESCRIPTION', 'LOW_RISKS', 'MEDIUM_RISKS', 'MITIGATION', 'YOUR_NAME', 'DOCUMENT_LIST']
+[TITLE]
+[COMPANY_NAME]`,
+      variables: ['NAME', 'SOLUTION', 'COMPANY', 'CHALLENGE_1', 'IMPACT_1', 'CURRENT_COST', 'TIMELINE', 'FEATURE_1', 'FEATURE_2', 'FEATURE_3', 'ROI_PERCENTAGE', 'ROI_TIMEFRAME', 'RISK_MITIGATION', 'CASE_STUDY', 'TECH_SPECS', 'CERTIFICATIONS', 'YOUR_NAME', 'TITLE', 'COMPANY_NAME']
     },
+
+    // Meeting Templates
     {
       id: 'default-5',
-      name: 'Meeting Request - D Type',
+      name: 'Project Kickoff Meeting - D Type',
       category: 'meeting',
       disc_type: 'D',
-      template_content: `Subject: 15-min strategic discussion - [TOPIC]
+      template_content: `**Meeting Purpose:** Launch [PROJECT_NAME] with clear objectives and timelines
 
-[NAME],
+**Agenda (45 minutes):**
 
-I need 15 minutes of your time to discuss [TOPIC]. This directly impacts [BUSINESS_IMPACT].
+1. **Project Overview** (5 min)
+   - Objective: [PROJECT_OBJECTIVE]
+   - Success metrics: [METRIC_1], [METRIC_2]
+   - Budget: [BUDGET]
 
-Agenda:
-1. Current challenge (3 min)
-2. Proposed solution (7 min)
-3. Next steps (5 min)
+2. **Timeline & Milestones** (10 min)
+   - Phase 1: [PHASE_1] - Due [DATE_1]
+   - Phase 2: [PHASE_2] - Due [DATE_2]
+   - Final delivery: [FINAL_DATE]
 
-Available slots:
-• [TIME_SLOT_1]
-• [TIME_SLOT_2]
-• [TIME_SLOT_3]
+3. **Team Roles & Responsibilities** (15 min)
+   - Project lead: [LEAD_NAME]
+   - Key stakeholders: [STAKEHOLDER_1], [STAKEHOLDER_2]
+   - Decision authority: [DECISION_MAKER]
 
-Which works for you?
+4. **Resource Allocation** (10 min)
+   - Budget breakdown
+   - Team assignments
+   - Tools and systems
 
-[YOUR_NAME]`,
-      variables: ['NAME', 'TOPIC', 'BUSINESS_IMPACT', 'TIME_SLOT_1', 'TIME_SLOT_2', 'TIME_SLOT_3', 'YOUR_NAME']
+5. **Next Steps & Action Items** (5 min)
+   - Immediate actions by [DATE]
+   - Next review meeting: [NEXT_MEETING_DATE]
+
+**Key Decisions Needed:**
+- [DECISION_1]
+- [DECISION_2]
+
+**Success Criteria:**
+- [CRITERIA_1]
+- [CRITERIA_2]`,
+      variables: ['PROJECT_NAME', 'PROJECT_OBJECTIVE', 'METRIC_1', 'METRIC_2', 'BUDGET', 'PHASE_1', 'DATE_1', 'PHASE_2', 'DATE_2', 'FINAL_DATE', 'LEAD_NAME', 'STAKEHOLDER_1', 'STAKEHOLDER_2', 'DECISION_MAKER', 'DATE', 'NEXT_MEETING_DATE', 'DECISION_1', 'DECISION_2', 'CRITERIA_1', 'CRITERIA_2']
     },
     {
       id: 'default-6',
-      name: 'Team Collaboration - I Type',
+      name: 'Team Brainstorming - I Type',
       category: 'meeting',
       disc_type: 'I',
-      template_content: `Subject: Let's brainstorm together! 🧠✨ - [PROJECT] kickoff
+      template_content: `**Meeting Purpose:** Generate creative solutions for [CHALLENGE] through collaborative brainstorming
 
-Hey [NAME]!
+**Agenda (60 minutes):**
 
-I'm super excited to kick off the [PROJECT] project with you and the team! 
+1. **Energizing Welcome** (5 min)
+   - Quick wins celebration
+   - Positive team updates
+   - Meeting energy setting
 
-I think we could create something really amazing together. Your expertise in [EXPERTISE_AREA] would be invaluable for this initiative.
+2. **Challenge Exploration** (15 min)
+   - Problem statement: [PROBLEM_STATEMENT]
+   - Current impact: [CURRENT_IMPACT]
+   - Ideal outcome: [IDEAL_OUTCOME]
+   - Everyone shares one word describing the challenge
 
-Meeting Details:
-📅 When: [DATE] at [TIME]
-📍 Where: [LOCATION/ZOOM_LINK]
-⏰ Duration: [DURATION]
+3. **Creative Brainstorming** (25 min)
+   - Round 1: Wild ideas (no judgment!)
+   - Round 2: Building on others' ideas
+   - Round 3: "What if..." scenarios
+   - Use sticky notes, whiteboard, mind mapping
 
-Agenda (but let's keep it flexible!):
-• Quick introductions and team energy check
-• Vision sharing and brainstorming session
-• Ideas collaboration 
-• Celebrate our awesome team! 🎉
+4. **Idea Clustering & Discussion** (10 min)
+   - Group similar concepts
+   - Highlight most exciting ideas
+   - Share enthusiasm for promising directions
 
-Can't wait to see what we create together!
+5. **Next Steps & Excitement Building** (5 min)
+   - Top 3 ideas to explore: [IDEA_1], [IDEA_2], [IDEA_3]
+   - Volunteer ownership assignments
+   - Celebration of creative energy!
 
-Cheers,
-[YOUR_NAME]`,
-      variables: ['NAME', 'PROJECT', 'EXPERTISE_AREA', 'DATE', 'TIME', 'LOCATION', 'DURATION', 'YOUR_NAME']
+**Materials Needed:**
+- Whiteboard/sticky notes
+- Markers
+- Snacks and drinks
+- Upbeat playlist
+
+**Follow-up:**
+- Share meeting photos and notes
+- Schedule follow-up sessions
+- Recognize contributions publicly`,
+      variables: ['CHALLENGE', 'PROBLEM_STATEMENT', 'CURRENT_IMPACT', 'IDEAL_OUTCOME', 'IDEA_1', 'IDEA_2', 'IDEA_3']
+    },
+    {
+      id: 'default-7',
+      name: 'Status Review Meeting - S Type',
+      category: 'meeting',
+      disc_type: 'S',
+      template_content: `**Meeting Purpose:** Review [PROJECT_NAME] progress and ensure team alignment
+
+**Agenda (50 minutes):**
+
+1. **Check-in & Comfort** (5 min)
+   - How is everyone feeling about the project?
+   - Any concerns or support needed?
+   - Appreciation for recent contributions
+
+2. **Progress Review** (20 min)
+   - Completed milestones: [COMPLETED_1], [COMPLETED_2]
+   - Current status: [CURRENT_STATUS]
+   - Upcoming deliverables: [UPCOMING_1], [UPCOMING_2]
+   - Timeline adherence: [TIMELINE_STATUS]
+
+3. **Challenge Discussion** (15 min)
+   - Obstacles encountered: [OBSTACLE_1]
+   - Support provided: [SUPPORT_PROVIDED]
+   - Team collaboration highlights
+   - Process improvements implemented
+
+4. **Team Support & Resources** (5 min)
+   - Resource needs: [RESOURCE_NEED_1]
+   - Training opportunities: [TRAINING_1]
+   - Workload balance check
+
+5. **Gentle Next Steps Planning** (5 min)
+   - Priorities for next period: [PRIORITY_1], [PRIORITY_2]
+   - Support commitments
+   - Next meeting: [NEXT_MEETING_DATE]
+
+**Team Wellness Check:**
+- Workload sustainability
+- Work-life balance
+- Job satisfaction indicators
+
+**Action Items:**
+- [ACTION_1] - Owner: [OWNER_1] - Due: [DUE_1]
+- [ACTION_2] - Owner: [OWNER_2] - Due: [DUE_2]`,
+      variables: ['PROJECT_NAME', 'COMPLETED_1', 'COMPLETED_2', 'CURRENT_STATUS', 'UPCOMING_1', 'UPCOMING_2', 'TIMELINE_STATUS', 'OBSTACLE_1', 'SUPPORT_PROVIDED', 'RESOURCE_NEED_1', 'TRAINING_1', 'PRIORITY_1', 'PRIORITY_2', 'NEXT_MEETING_DATE', 'ACTION_1', 'OWNER_1', 'DUE_1', 'ACTION_2', 'OWNER_2', 'DUE_2']
+    },
+    {
+      id: 'default-8',
+      name: 'Technical Review Meeting - C Type',
+      category: 'meeting',
+      disc_type: 'C',
+      template_content: `**Meeting Purpose:** Comprehensive technical review of [SYSTEM_NAME] with detailed analysis
+
+**Pre-meeting Requirements:**
+- Review attached technical documentation
+- Prepare questions and concerns
+- Bring relevant data and metrics
+
+**Agenda (90 minutes):**
+
+1. **Documentation Review** (20 min)
+   - Technical specifications: [TECH_SPEC_VERSION]
+   - Architecture overview: [ARCHITECTURE_SUMMARY]
+   - Performance benchmarks: [BENCHMARK_DATA]
+   - Security audit results: [SECURITY_STATUS]
+
+2. **Detailed Technical Analysis** (30 min)
+   - System performance metrics: [PERFORMANCE_METRICS]
+   - Error rates and reliability: [ERROR_RATE]% 
+   - Scalability assessment: [SCALABILITY_RATING]
+   - Integration compatibility: [INTEGRATION_STATUS]
+
+3. **Quality Assurance Review** (20 min)
+   - Test coverage: [TEST_COVERAGE]%
+   - Bug reports analysis: [BUG_COUNT] open, [CRITICAL_BUGS] critical
+   - Code review findings: [CODE_REVIEW_SCORE]
+   - Compliance status: [COMPLIANCE_ITEMS]
+
+4. **Risk Assessment** (10 min)
+   - Technical risks: [TECH_RISK_1], [TECH_RISK_2]
+   - Mitigation strategies: [MITIGATION_1], [MITIGATION_2]
+   - Contingency plans: [CONTINGENCY_PLAN]
+
+5. **Recommendations & Action Items** (10 min)
+   - Priority improvements: [IMPROVEMENT_1], [IMPROVEMENT_2]
+   - Resource requirements: [RESOURCE_REQUIREMENTS]
+   - Timeline for implementations: [IMPLEMENTATION_TIMELINE]
+
+**Required Attendees:**
+- Technical lead: [TECH_LEAD]
+- QA manager: [QA_MANAGER]
+- Security specialist: [SECURITY_SPECIALIST]
+
+**Deliverables:**
+- Technical assessment report
+- Detailed action plan with timelines
+- Updated risk register`,
+      variables: ['SYSTEM_NAME', 'TECH_SPEC_VERSION', 'ARCHITECTURE_SUMMARY', 'BENCHMARK_DATA', 'SECURITY_STATUS', 'PERFORMANCE_METRICS', 'ERROR_RATE', 'SCALABILITY_RATING', 'INTEGRATION_STATUS', 'TEST_COVERAGE', 'BUG_COUNT', 'CRITICAL_BUGS', 'CODE_REVIEW_SCORE', 'COMPLIANCE_ITEMS', 'TECH_RISK_1', 'TECH_RISK_2', 'MITIGATION_1', 'MITIGATION_2', 'CONTINGENCY_PLAN', 'IMPROVEMENT_1', 'IMPROVEMENT_2', 'RESOURCE_REQUIREMENTS', 'IMPLEMENTATION_TIMELINE', 'TECH_LEAD', 'QA_MANAGER', 'SECURITY_SPECIALIST']
+    },
+
+    // Sales Templates
+    {
+      id: 'default-9',
+      name: 'Sales Pitch - D Type',
+      category: 'sales',
+      disc_type: 'D',
+      template_content: `**The Bottom Line:** [SOLUTION] will increase [COMPANY]'s [METRIC] by [PERCENTAGE]% in [TIMEFRAME].
+
+**Executive Summary:**
+• Problem: [PROBLEM_STATEMENT]
+• Solution: [SOLUTION_NAME]
+• Investment: [INVESTMENT_AMOUNT]
+• ROI: [ROI_PERCENTAGE]% in [ROI_TIMEFRAME]
+• Start date: [START_DATE]
+
+**Competitive Advantage:**
+1. [ADVANTAGE_1] - Immediate impact
+2. [ADVANTAGE_2] - Market leadership
+3. [ADVANTAGE_3] - Proven results
+
+**Implementation:**
+• Phase 1: [PHASE_1] - [DURATION_1]
+• Phase 2: [PHASE_2] - [DURATION_2]
+• Full deployment: [FULL_DEPLOYMENT_DATE]
+
+**Success Metrics:**
+• [SUCCESS_METRIC_1]: [TARGET_1]
+• [SUCCESS_METRIC_2]: [TARGET_2]
+• [SUCCESS_METRIC_3]: [TARGET_3]
+
+**Next Steps:**
+1. Decision by [DECISION_DATE]
+2. Contract signing by [CONTRACT_DATE]
+3. Project kickoff: [KICKOFF_DATE]
+
+**Investment Details:**
+• Total cost: [TOTAL_COST]
+• Payment terms: [PAYMENT_TERMS]
+• Warranty: [WARRANTY_PERIOD]
+
+**Call to Action:**
+Ready to move forward? Let's close this today.`,
+      variables: ['SOLUTION', 'COMPANY', 'METRIC', 'PERCENTAGE', 'TIMEFRAME', 'PROBLEM_STATEMENT', 'SOLUTION_NAME', 'INVESTMENT_AMOUNT', 'ROI_PERCENTAGE', 'ROI_TIMEFRAME', 'START_DATE', 'ADVANTAGE_1', 'ADVANTAGE_2', 'ADVANTAGE_3', 'PHASE_1', 'DURATION_1', 'PHASE_2', 'DURATION_2', 'FULL_DEPLOYMENT_DATE', 'SUCCESS_METRIC_1', 'TARGET_1', 'SUCCESS_METRIC_2', 'TARGET_2', 'SUCCESS_METRIC_3', 'TARGET_3', 'DECISION_DATE', 'CONTRACT_DATE', 'KICKOFF_DATE', 'TOTAL_COST', 'PAYMENT_TERMS', 'WARRANTY_PERIOD']
+    },
+    {
+      id: 'default-10',
+      name: 'Relationship Building - I Type',
+      category: 'sales',
+      disc_type: 'I',
+      template_content: `**Building Our Partnership for Success!**
+
+Hi [NAME]!
+
+I'm so excited about the opportunity to work together! After our amazing conversation, I can really see how [SOLUTION] will transform [COMPANY]'s approach to [BUSINESS_AREA].
+
+**What I Love About This Partnership:**
+🌟 Your vision for [VISION] aligns perfectly with what we do
+🌟 The energy and passion your team brings is incredible
+🌟 Together, we can achieve something truly remarkable!
+
+**The Journey We'll Take Together:**
+• **Discovery Phase**: Getting to know your team and culture
+• **Collaborative Design**: Co-creating the perfect solution
+• **Celebration Launch**: Making a big splash with your success
+• **Ongoing Partnership**: Growing together long-term
+
+**Success Stories from Similar Partnerships:**
+• [CLIENT_1] achieved [RESULT_1] - they love working with us!
+• [CLIENT_2] saw [RESULT_2] - their team is thriving!
+• [CLIENT_3] experienced [RESULT_3] - they became industry leaders!
+
+**What Makes This Special:**
+✨ Dedicated support team who becomes part of your family
+✨ Regular check-ins and celebrations of wins
+✨ Continuous innovation and improvements
+✨ A true partnership, not just a vendor relationship
+
+**Investment in Our Future Together:**
+• Total partnership investment: [INVESTMENT]
+• Flexible payment options: [PAYMENT_OPTIONS]
+• Includes ongoing support and friendship!
+
+**Let's Celebrate This Decision!**
+I can't wait to welcome [COMPANY] to our family of success stories. When can we pop the champagne and get started?
+
+With enthusiasm and partnership,
+[YOUR_NAME]
+
+P.S. I already have some exciting ideas for our launch celebration! 🎉`,
+      variables: ['NAME', 'SOLUTION', 'COMPANY', 'BUSINESS_AREA', 'VISION', 'CLIENT_1', 'RESULT_1', 'CLIENT_2', 'RESULT_2', 'CLIENT_3', 'RESULT_3', 'INVESTMENT', 'PAYMENT_OPTIONS', 'YOUR_NAME']
     }
   ]
 
