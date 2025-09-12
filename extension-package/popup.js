@@ -68,11 +68,11 @@ class PopupController {
         // Get the current API URL from background script
         try {
             const response = await chrome.runtime.sendMessage({ action: 'getAPIUrl' });
-            const baseUrl = response?.url || 'https://crystalknows-clone.vercel.app';
+            const baseUrl = response?.url || 'https://personaflow.vercel.app';
             chrome.tabs.create({ url: `${baseUrl}/auth/login` });
         } catch (error) {
             // Fallback to production if background script fails
-            chrome.tabs.create({ url: 'https://crystalknows-clone.vercel.app/auth/login' });
+            chrome.tabs.create({ url: 'https://personaflow.vercel.app/auth/login' });
         }
     }
 

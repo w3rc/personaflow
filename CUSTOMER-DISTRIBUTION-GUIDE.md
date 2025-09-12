@@ -39,7 +39,7 @@ For wider distribution, you can publish to Chrome Web Store:
 
 Your customers need:
 - ✅ Google Chrome browser (version 88+)
-- ✅ PersonaFlow account at https://crystalknows-clone.vercel.app
+- ✅ PersonaFlow account at https://personaflow.vercel.app
 - ✅ LinkedIn profiles to analyze
 
 ## 🎯 Customer Experience
@@ -52,7 +52,7 @@ Your customers need:
 5. Extension appears in Chrome toolbar
 
 ### Usage Flow:
-1. Sign in to PersonaFlow at https://crystalknows-clone.vercel.app
+1. Sign in to PersonaFlow at https://personaflow.vercel.app
 2. Navigate to any LinkedIn profile
 3. Click PersonaFlow extension icon
 4. Extension shows authentication status
@@ -69,7 +69,7 @@ Your customers need:
 - ✅ **Dashboard Integration**: Profiles appear with "Extension" badges
 
 ### API Integration:
-- Production URL: `https://crystalknows-clone.vercel.app`
+- Production URL: `https://personaflow.vercel.app`
 - Authentication: Cookie-based sessions
 - Profile Creation: `/api/profiles` endpoint
 - User Verification: `/api/auth/user` endpoint
@@ -92,7 +92,7 @@ We're excited to share the PersonaFlow Chrome Extension that lets you extract Li
 📦 Installation:
 1. Download the attached personaflow-extension.zip file
 2. Follow the INSTALL.md guide (step-by-step instructions included)
-3. Sign in to PersonaFlow at https://crystalknows-clone.vercel.app
+3. Sign in to PersonaFlow at https://personaflow.vercel.app
 4. Start analyzing LinkedIn profiles!
 
 💡 How to use:
@@ -118,7 +118,7 @@ PersonaFlow Team
 - Refresh the LinkedIn page and try again
 
 **"Not signed in" message**
-- Go to https://crystalknows-clone.vercel.app and sign in
+- Go to https://personaflow.vercel.app and sign in
 - Use the same Chrome browser for both extension and PersonaFlow
 - Clear browser cache if issues persist
 
@@ -138,11 +138,11 @@ Consider these improvements for future versions:
 
 ## 🎉 Ready to Ship!
 
-Your PersonaFlow Chrome Extension is production-ready and configured to work with https://crystalknows-clone.vercel.app. Simply share the `personaflow-extension.zip` file with your customers along with the installation instructions.
+Your PersonaFlow Chrome Extension is production-ready and configured to work with https://personaflow.vercel.app. Simply share the `personaflow-extension.zip` file with your customers along with the installation instructions.
 
 ---
 
 **Package Generated**: `personaflow-extension.zip`  
 **Extension Version**: 1.0.0  
-**Production URL**: https://crystalknows-clone.vercel.app  
+**Production URL**: https://personaflow.vercel.app  
 **Ready for Distribution**: ✅

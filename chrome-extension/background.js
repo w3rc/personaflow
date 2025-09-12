@@ -5,11 +5,11 @@ console.log('🚀 PersonaFlow LinkedIn Extractor - Background Script Starting');
 
 // Configuration
 const CONFIG = {
-  PRODUCTION_URL: 'https://crystalknows-clone.vercel.app',
+  PRODUCTION_URL: 'https://personaflow.vercel.app',
   DEVELOPMENT_URLS: ['http://localhost:3001', 'http://localhost:3000'],
   MAX_RETRIES: 3,
   RETRY_DELAY: 1000,
-  currentAPI: 'https://crystalknows-clone.vercel.app' // Default to production
+  currentAPI: 'https://personaflow.vercel.app' // Default to production
 };
 
 // Environment detection function

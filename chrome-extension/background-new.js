@@ -5,7 +5,7 @@ console.log('🚀 PersonaFlow LinkedIn Extractor - Background Script Starting');
 
 // Configuration
 const CONFIG = {
-  API_BASE_URL: 'https://crystalknows-clone.vercel.app',
+  API_BASE_URL: 'https://personaflow.vercel.app',
   MAX_RETRIES: 3,
   RETRY_DELAY: 1000
 };

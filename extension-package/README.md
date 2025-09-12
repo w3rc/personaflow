@@ -25,19 +25,19 @@ Extract LinkedIn profiles and get AI-powered personality insights with DISC anal
 ### Requirements:
 
 - Google Chrome browser (version 88+)
-- Active PersonaFlow account at https://crystalknows-clone.vercel.app
+- Active PersonaFlow account at https://personaflow.vercel.app
 - LinkedIn profile pages to analyze
 
 ## Usage
 
 ### How to Use PersonaFlow Extension:
 
-1. **Sign in** to PersonaFlow at https://crystalknows-clone.vercel.app
+1. **Sign in** to PersonaFlow at https://personaflow.vercel.app
 2. **Navigate** to any LinkedIn profile page (e.g., `https://www.linkedin.com/in/someone`)
 3. **Click** the PersonaFlow extension icon in your browser toolbar
 4. **Verify** you're signed in (shows your email in the extension popup)
 5. **Click "Extract Profile Data"** to analyze the profile
-6. **View results** in your PersonaFlow dashboard at https://crystalknows-clone.vercel.app/dashboard/profiles
+6. **View results** in your PersonaFlow dashboard at https://personaflow.vercel.app/dashboard/profiles
 
 ### Data Points Extracted
 

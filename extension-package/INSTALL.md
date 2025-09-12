@@ -6,7 +6,7 @@
 2. **Open Chrome** and go to chrome://extensions/
 3. **Enable Developer Mode** (toggle in top-right)
 4. **Click "Load unpacked"** and select the extracted folder
-5. **Sign in** to PersonaFlow at https://crystalknows-clone.vercel.app
+5. **Sign in** to PersonaFlow at https://personaflow.vercel.app
 6. **Start analyzing** LinkedIn profiles!
 
 ## Step-by-Step Instructions
@@ -26,7 +26,7 @@
 - Click the pin icon to keep it visible in your toolbar
 
 ### 3. Sign In to PersonaFlow
-- Go to https://crystalknows-clone.vercel.app
+- Go to https://personaflow.vercel.app
 - Create an account or sign in to your existing account
 - Make sure you're signed in before using the extension
 
@@ -45,7 +45,7 @@
 - Check that Developer Mode is enabled in chrome://extensions/
 
 **Can't see extracted profiles?**
-- Check your PersonaFlow dashboard at https://crystalknows-clone.vercel.app/dashboard/profiles
+- Check your PersonaFlow dashboard at https://personaflow.vercel.app/dashboard/profiles
 - Profiles with "Extension" badges are from the Chrome extension
 
 **Authentication issues?**
@@ -55,7 +55,7 @@
 ## Support
 
 For help or questions:
-- Visit: https://crystalknows-clone.vercel.app
+- Visit: https://personaflow.vercel.app
 - Check the main README.md file in this package
 
 ---
