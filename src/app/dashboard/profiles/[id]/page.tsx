@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { ArrowLeft, Mail, Linkedin, Calendar, TrendingUp } from 'lucide-react'
+import { AIToolsSection } from '@/components/profile-tools/AIToolsSection'
 
 interface ProfilePageProps {
   params: Promise<{ id: string }>
@@ -303,6 +304,15 @@ export default async function ProfilePage(props: ProfilePageProps) {
             </div>
           </CardContent>
         </Card>
+
+        {/* AI Communication Tools */}
+        <AIToolsSection
+          profileId={profile.id}
+          profileData={{
+            target_name: profile.target_name,
+            disc_type: profile.disc_type
+          }}
+        />
 
         {/* Actions */}
         <div className="mt-8 flex space-x-4">

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Users, FileText, TrendingUp, Plus } from 'lucide-react'
+import { Users, FileText, TrendingUp, Plus, Settings } from 'lucide-react'
 
 export default async function Dashboard() {
   const supabase = await createClient()
@@ -47,6 +47,12 @@ export default async function Dashboard() {
           </div>
           <div className="ml-auto flex items-center space-x-4">
             <span className="text-sm text-muted-foreground">Welcome, {user.email}</span>
+            <Link href="/dashboard/settings">
+              <Button variant="ghost" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Button>
+            </Link>
             <form action="/auth/signout" method="post">
               <Button variant="outline" size="sm" type="submit">
                 Sign Out
@@ -107,7 +113,7 @@ export default async function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <Card>
             <CardHeader>
               <CardTitle>Create New Profile</CardTitle>
@@ -169,6 +175,23 @@ export default async function Dashboard() {
               <Link href="/dashboard/writing-assistant">
                 <Button variant="outline" className="w-full">
                   Start Writing
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>AI Tools Settings</CardTitle>
+              <CardDescription>
+                Customize AI prompts for communication tools
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/dashboard/settings">
+                <Button variant="outline" className="w-full">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Settings
                 </Button>
               </Link>
             </CardContent>
