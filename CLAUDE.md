@@ -48,7 +48,7 @@ src/
 - `subscriptions` - User subscription management
 
 ### Key Features Implemented
-1. **AI-Powered Personality Analysis** - Claude 3.5 Haiku via OpenRouter for DISC analysis
+1. **AI-Powered Personality Analysis** - Claude 3.5 Haiku via fal.ai (with OpenRouter fallback) for DISC analysis
 2. **Communication Assistant** - Personalized templates and AI-powered suggestions
 3. **Dashboard** - Profile management and analytics
 4. **Subscription System** - Free/Premium tiers with usage limits
@@ -64,9 +64,14 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_key
 
-# OpenRouter AI Configuration
+# fal.ai AI Configuration (Primary)
+FAL_KEY=your_fal_api_key
+FAL_MODEL=anthropic/claude-3-5-haiku
+
+# OpenRouter AI Configuration (Fallback - Optional)
 OPENROUTER_API_KEY=your_openrouter_api_key
 OPENROUTER_MODEL=anthropic/claude-3.5-haiku
+
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
@@ -86,8 +91,27 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 ## AI Integration
 
-- **Claude 3.5 Haiku** via OpenRouter for personality analysis
-- Cost-effective: ~$0.01-0.03 per analysis
-- Automatic fallback to basic analysis if AI unavailable
-- Sophisticated DISC analysis with detailed insights
-- 30-second timeout protection and error handling
+### Three-Tier Fallback System
+The application uses a robust three-tier AI system for personality analysis:
+
+1. **Primary: fal.ai** (`src/lib/falai.ts`)
+   - Uses fal.ai's AnyLLM endpoint with Claude 3.5 Haiku
+   - Fast, queue-optimized processing
+   - Cost-effective: ~$0.01-0.03 per analysis
+
+2. **Fallback: OpenRouter** (`src/lib/openrouter.ts`)
+   - Automatically engaged if fal.ai fails
+   - Uses OpenRouter's API with Claude 3.5 Haiku
+   - Same analysis quality and cost structure
+
+3. **Final Fallback: Basic Keyword Analysis**
+   - Keyword-based DISC scoring when both AI services fail
+   - Lower confidence score (0.3-0.5 vs AI 0.7-0.95)
+   - Ensures service continuity
+
+### Implementation Details
+- 30-second timeout protection for all AI calls
+- Automatic error handling and service switching
+- Logging of which AI service was used for each analysis
+- Consistent DISC analysis output format across all tiers
+- Models configurable via environment variables

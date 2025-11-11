@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { analyzePersonalityWithAI } from '@/lib/openrouter'
+import { analyzePersonalityWithFalAI } from '@/lib/falai'
+import { analyzePersonalityWithOpenRouter } from '@/lib/openrouter'
 import { createClient } from '@/lib/supabase/server'
 import { validateAnalysisText } from '@/lib/validation'
 import { createErrorResponse, handleValidationError, checkRateLimit, logError } from '@/lib/error-handling'
@@ -177,17 +178,32 @@ export async function POST(request: NextRequest) {
     }
 
     let analysis: PersonalityAnalysis
+    let aiServiceUsed = 'none'
 
     try {
-      // Try AI analysis first with sanitized text
-      console.log('Attempting AI analysis for user:', userId)
-      analysis = await analyzePersonalityWithAI(sanitizedText)
-      console.log('AI analysis successful')
-    } catch (aiError) {
-      console.error('AI analysis failed, using fallback:', aiError)
-      // Fallback to basic analysis with sanitized text
-      analysis = getBasicAnalysis(sanitizedText)
+      // Try fal.ai first
+      console.log('Attempting fal.ai analysis for user:', userId)
+      analysis = await analyzePersonalityWithFalAI(sanitizedText)
+      aiServiceUsed = 'fal.ai'
+      console.log('fal.ai analysis successful')
+    } catch (falError) {
+      console.error('fal.ai analysis failed, trying OpenRouter fallback:', falError)
+
+      try {
+        // Fallback to OpenRouter
+        console.log('Attempting OpenRouter analysis for user:', userId)
+        analysis = await analyzePersonalityWithOpenRouter(sanitizedText)
+        aiServiceUsed = 'openrouter'
+        console.log('OpenRouter analysis successful')
+      } catch (openrouterError) {
+        console.error('OpenRouter analysis failed, using basic fallback:', openrouterError)
+        // Final fallback to basic analysis with sanitized text
+        analysis = getBasicAnalysis(sanitizedText)
+        aiServiceUsed = 'basic'
+      }
     }
+
+    console.log(`Analysis completed using: ${aiServiceUsed}`)
 
     return NextResponse.json({
       success: true,

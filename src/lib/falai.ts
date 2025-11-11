@@ -1,13 +1,13 @@
 import axios from 'axios'
 
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions'
+const FAL_API_URL = 'https://fal.run/fal-ai/any-llm'
 
-interface OpenRouterResponse {
-  choices: {
-    message: {
-      content: string
-    }
-  }[]
+interface FalAIResponse {
+  output: string
+  reasoning?: string
+  partial: boolean
+  error: string | null
+  id: string
   usage?: {
     prompt_tokens: number
     completion_tokens: number
@@ -36,19 +36,19 @@ interface PersonalityAnalysis {
   }
 }
 
-export async function analyzePersonalityWithOpenRouter(text: string): Promise<PersonalityAnalysis> {
-  const apiKey = process.env.OPENROUTER_API_KEY
-  const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-3.5-haiku'
+export async function analyzePersonalityWithFalAI(text: string): Promise<PersonalityAnalysis> {
+  const apiKey = process.env.FAL_KEY
+  const model = process.env.FAL_MODEL || 'anthropic/claude-3-5-haiku'
 
   if (!apiKey) {
-    throw new Error('OPENROUTER_API_KEY not configured')
+    throw new Error('FAL_KEY not configured')
   }
 
-  const prompt = `You are an expert personality psychologist specializing in DISC personality assessment with extensive experience analyzing LinkedIn professional communication. Analyze the following text sample and determine the person's DISC personality type based on their communication style, word choice, and behavioral indicators.
+  const systemPrompt = `You are an expert personality psychologist specializing in DISC personality assessment with extensive experience analyzing LinkedIn professional communication. Analyze the following text sample and determine the person's DISC personality type based on their communication style, word choice, and behavioral indicators.
 
 DISC Framework:
 - D (Dominance): Direct, results-oriented, decisive, assertive, competitive
-- I (Influence): Outgoing, enthusiastic, optimistic, people-focused, expressive  
+- I (Influence): Outgoing, enthusiastic, optimistic, people-focused, expressive
 - S (Steadiness): Patient, reliable, supportive, stable, team-oriented
 - C (Conscientiousness): Analytical, detailed, systematic, careful, quality-focused
 
@@ -60,15 +60,12 @@ LinkedIn Communication Context:
 - High S types emphasize team collaboration, stability, and supportive messaging
 - High C types share detailed insights, data-driven content, and methodical thinking
 
-Text to analyze:
-"${text}"
-
-Based on this text, provide a comprehensive DISC analysis in the following JSON format:
+Based on the text provided, provide a comprehensive DISC analysis in the following JSON format:
 
 {
   "disc_scores": {
     "D": 0.0-1.0,
-    "I": 0.0-1.0, 
+    "I": 0.0-1.0,
     "S": 0.0-1.0,
     "C": 0.0-1.0
   },
@@ -89,38 +86,35 @@ Scoring guidelines:
 
 Return only valid JSON with no additional text.`
 
+  const prompt = `Text to analyze:
+"${text}"`
+
   try {
-    const response = await axios.post<OpenRouterResponse>(
-      OPENROUTER_API_URL,
+    const response = await axios.post<FalAIResponse>(
+      FAL_API_URL,
       {
+        prompt,
+        system_prompt: systemPrompt,
         model,
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
         temperature: 0.3,
         max_tokens: 1000
       },
       {
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://personaflow.vercel.app',
-          'X-Title': 'PersonaFlow'
+          'Authorization': `Key ${apiKey}`,
+          'Content-Type': 'application/json'
         },
         timeout: 30000
       }
     )
 
-    const content = response.data.choices[0]?.message?.content
-    if (!content) {
-      throw new Error('No response content from OpenRouter')
+    const output = response.data.output
+    if (!output) {
+      throw new Error('No output from fal.ai')
     }
 
     // Parse the JSON response
-    const analysisData = JSON.parse(content)
+    const analysisData = JSON.parse(output)
 
     // Transform to our expected format
     const analysis: PersonalityAnalysis = {
@@ -142,25 +136,31 @@ Return only valid JSON with no additional text.`
     return analysis
 
   } catch (error) {
-    console.error('OpenRouter API Error:', error)
-    
-    // Log usage info if available
-    if (axios.isAxiosError(error) && error.response?.data) {
-      console.error('API Response Error:', error.response.data)
+    console.error('fal.ai API Error:', error)
+
+    // Log detailed error information
+    if (axios.isAxiosError(error)) {
+      if (error.response?.data) {
+        console.error('fal.ai Response Error:', error.response.data)
+        console.error('Status:', error.response.status)
+      }
+      if (error.code === 'ECONNABORTED') {
+        console.error('fal.ai request timeout')
+      }
     }
 
-    throw new Error('Failed to analyze personality with AI')
+    throw new Error('Failed to analyze personality with fal.ai')
   }
 }
 
-export async function testOpenRouterConnection(): Promise<boolean> {
+export async function testFalAIConnection(): Promise<boolean> {
   try {
-    const testAnalysis = await analyzePersonalityWithOpenRouter(
+    const testAnalysis = await analyzePersonalityWithFalAI(
       "I love working with teams and bringing energy to every project. I'm always excited to brainstorm new ideas and connect with people!"
     )
     return !!testAnalysis.disc_type
   } catch (error) {
-    console.error('OpenRouter connection test failed:', error)
+    console.error('fal.ai connection test failed:', error)
     return false
   }
 }

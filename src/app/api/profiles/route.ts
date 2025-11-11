@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
-import { analyzePersonalityWithAI } from '@/lib/openrouter'
+import { analyzePersonalityWithFalAI } from '@/lib/falai'
+import { analyzePersonalityWithOpenRouter } from '@/lib/openrouter'
 import { createErrorResponse, handleValidationError } from '@/lib/error-handling'
 
 interface ProfileData {
@@ -139,29 +140,48 @@ export async function POST(request: NextRequest) {
       return createErrorResponse(validationError, 400)
     }
 
-    // Perform personality analysis
+    // Perform personality analysis with three-tier fallback
     let personalityAnalysis
+    let aiServiceUsed = 'none'
+
     try {
-      personalityAnalysis = await analyzePersonalityWithAI(analysisText)
-    } catch (aiError) {
-      console.error('AI analysis failed for extension profile:', aiError)
-      // Use fallback analysis (you could import the fallback function from analyze-personality route)
-      personalityAnalysis = {
-        disc_type: 'D',
-        disc_scores: { D: 0.6, I: 0.3, S: 0.4, C: 0.5 },
-        confidence_score: 0.3,
-        personality_insights: {
-          primary_type: 'D',
-          strengths: ['Results-oriented', 'Direct', 'Decisive'],
-          challenges: ['May be impatient', 'Can overlook details'],
-          motivators: ['Challenges', 'Authority', 'Results']
-        },
-        communication_tips: {
-          dos: ['Be direct and to the point', 'Focus on results'],
-          donts: ['Waste their time', 'Be overly detailed']
+      // Try fal.ai first
+      console.log('Attempting fal.ai analysis for extension profile:', sanitizedName)
+      personalityAnalysis = await analyzePersonalityWithFalAI(analysisText)
+      aiServiceUsed = 'fal.ai'
+      console.log('fal.ai analysis successful for extension profile')
+    } catch (falError) {
+      console.error('fal.ai analysis failed for extension profile, trying OpenRouter:', falError)
+
+      try {
+        // Fallback to OpenRouter
+        console.log('Attempting OpenRouter analysis for extension profile:', sanitizedName)
+        personalityAnalysis = await analyzePersonalityWithOpenRouter(analysisText)
+        aiServiceUsed = 'openrouter'
+        console.log('OpenRouter analysis successful for extension profile')
+      } catch (openrouterError) {
+        console.error('OpenRouter analysis failed for extension profile, using basic fallback:', openrouterError)
+        // Final fallback to basic analysis
+        personalityAnalysis = {
+          disc_type: 'D',
+          disc_scores: { D: 0.6, I: 0.3, S: 0.4, C: 0.5 },
+          confidence_score: 0.3,
+          personality_insights: {
+            primary_type: 'D',
+            strengths: ['Results-oriented', 'Direct', 'Decisive'],
+            challenges: ['May be impatient', 'Can overlook details'],
+            motivators: ['Challenges', 'Authority', 'Results']
+          },
+          communication_tips: {
+            dos: ['Be direct and to the point', 'Focus on results'],
+            donts: ['Waste their time', 'Be overly detailed']
+          }
         }
+        aiServiceUsed = 'basic'
       }
     }
+
+    console.log(`Extension profile analysis completed using: ${aiServiceUsed}`)
 
     // Create profile in personality_profiles table
     // Use authenticated user ID if available, otherwise null for backwards compatibility
