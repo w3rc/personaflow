@@ -49,19 +49,19 @@ export default async function Dashboard() {
           <div className="ml-auto flex items-center space-x-4">
             <span className="text-sm text-muted-foreground">Welcome, {user.email}</span>
             <Link href="/dashboard/profiles">
-              <Button variant="ghost" size="sm" className="hover:text-primary">
+              <Button variant="ghost" size="sm" className="text-foreground hover:text-primary hover:bg-primary/10">
                 <Users className="h-4 w-4 mr-2" />
                 All Profiles
               </Button>
             </Link>
             <Link href="/dashboard/settings">
-              <Button variant="ghost" size="sm" className="hover:text-primary">
+              <Button variant="ghost" size="sm" className="text-foreground hover:text-primary hover:bg-primary/10">
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Button>
             </Link>
             <form action="/auth/signout" method="post">
-              <Button variant="outline" size="sm" type="submit" className="border-border/50 hover:border-primary/50">
+              <Button variant="outline" size="sm" type="submit" className="border-border/50 hover:border-primary/50 hover:bg-primary/10">
                 Sign Out
               </Button>
             </form>
