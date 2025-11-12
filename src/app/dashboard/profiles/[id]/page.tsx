@@ -3,8 +3,9 @@ import { redirect, notFound } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Link from 'next/link'
-import { ArrowLeft, Mail, Linkedin, Calendar, TrendingUp } from 'lucide-react'
+import { ArrowLeft, Mail, Linkedin, Calendar, TrendingUp, BarChart3, Wrench } from 'lucide-react'
 import { AIToolsSection } from '@/components/profile-tools/AIToolsSection'
 
 interface ProfilePageProps {
@@ -108,7 +109,7 @@ export default async function ProfilePage(props: ProfilePageProps) {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto p-4 md:p-8">
+      <div className="max-w-7xl mx-auto p-4 md:p-8">
         {/* Profile Header */}
         <div className="mb-8">
           <div className="flex items-start justify-between">
@@ -153,25 +154,39 @@ export default async function ProfilePage(props: ProfilePageProps) {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* DISC Type */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Primary DISC Type</CardTitle>
-              <CardDescription>Dominant personality characteristic</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${primaryType.color}`}>
-                {profile.disc_type} - {primaryType.name}
-              </div>
-              <p className="text-sm text-muted-foreground mt-3">
-                {primaryType.description}
-              </p>
-            </CardContent>
-          </Card>
+        {/* Tabbed Interface */}
+        <Tabs defaultValue="analysis" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 max-w-md mb-6">
+            <TabsTrigger value="analysis" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Analysis
+            </TabsTrigger>
+            <TabsTrigger value="tools" className="flex items-center gap-2">
+              <Wrench className="h-4 w-4" />
+              Tools
+            </TabsTrigger>
+          </TabsList>
 
-          {/* DISC Scores */}
-          <Card>
+          <TabsContent value="analysis" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* DISC Type */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur">
+                <CardHeader>
+                  <CardTitle>Primary DISC Type</CardTitle>
+                  <CardDescription>Dominant personality characteristic</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${primaryType.color}`}>
+                    {profile.disc_type} - {primaryType.name}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-3">
+                    {primaryType.description}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* DISC Scores */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur">
             <CardHeader>
               <CardTitle>DISC Breakdown</CardTitle>
               <CardDescription>Detailed personality scores</CardDescription>
@@ -196,12 +211,12 @@ export default async function ProfilePage(props: ProfilePageProps) {
             </CardContent>
           </Card>
 
-          {/* Strengths */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Key Strengths</CardTitle>
-              <CardDescription>Natural talents and abilities</CardDescription>
-            </CardHeader>
+              {/* Strengths */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur">
+                <CardHeader>
+                  <CardTitle>Key Strengths</CardTitle>
+                  <CardDescription>Natural talents and abilities</CardDescription>
+                </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {insights.strengths.map((strength: string, index: number) => (
@@ -214,12 +229,12 @@ export default async function ProfilePage(props: ProfilePageProps) {
             </CardContent>
           </Card>
 
-          {/* Challenges */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Potential Challenges</CardTitle>
-              <CardDescription>Areas that may need attention</CardDescription>
-            </CardHeader>
+              {/* Challenges */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur">
+                <CardHeader>
+                  <CardTitle>Potential Challenges</CardTitle>
+                  <CardDescription>Areas that may need attention</CardDescription>
+                </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {insights.challenges.map((challenge: string, index: number) => (
@@ -232,12 +247,12 @@ export default async function ProfilePage(props: ProfilePageProps) {
             </CardContent>
           </Card>
 
-          {/* Motivators */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Key Motivators</CardTitle>
-              <CardDescription>What drives and energizes them</CardDescription>
-            </CardHeader>
+              {/* Motivators */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur">
+                <CardHeader>
+                  <CardTitle>Key Motivators</CardTitle>
+                  <CardDescription>What drives and energizes them</CardDescription>
+                </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {insights.motivators.map((motivator: string, index: number) => (
@@ -250,12 +265,12 @@ export default async function ProfilePage(props: ProfilePageProps) {
             </CardContent>
           </Card>
 
-          {/* Data Sources */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Analysis Sources</CardTitle>
-              <CardDescription>Data used for this analysis</CardDescription>
-            </CardHeader>
+              {/* Data Sources */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur">
+                <CardHeader>
+                  <CardTitle>Analysis Sources</CardTitle>
+                  <CardDescription>Data used for this analysis</CardDescription>
+                </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {profile.data_sources?.map((source: string, index: number) => (
@@ -269,64 +284,68 @@ export default async function ProfilePage(props: ProfilePageProps) {
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* Communication Tips */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Communication Guidelines</CardTitle>
-            <CardDescription>How to communicate effectively with {profile.target_name}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-medium text-green-700 mb-3">✓ DO</h4>
-                <div className="space-y-2">
-                  {tips.dos.map((tip: string, index: number) => (
-                    <div key={index} className="flex items-start space-x-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
-                      <span className="text-sm">{tip}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h4 className="font-medium text-red-700 mb-3">✗ DON&apos;T</h4>
-                <div className="space-y-2">
-                  {tips.donts.map((tip: string, index: number) => (
-                    <div key={index} className="flex items-start space-x-2">
-                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
-                      <span className="text-sm">{tip}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* AI Communication Tools */}
-        <AIToolsSection
-          profileId={profile.id}
-          profileData={{
-            target_name: profile.target_name,
-            disc_type: profile.disc_type
-          }}
-        />
+            {/* Communication Tips */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur">
+              <CardHeader>
+                <CardTitle>Communication Guidelines</CardTitle>
+                <CardDescription>How to communicate effectively with {profile.target_name}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-medium text-green-400 mb-3">✓ DO</h4>
+                    <div className="space-y-2">
+                      {tips.dos.map((tip: string, index: number) => (
+                        <div key={index} className="flex items-start space-x-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                          <span className="text-sm">{tip}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-red-400 mb-3">✗ DON&apos;T</h4>
+                    <div className="space-y-2">
+                      {tips.donts.map((tip: string, index: number) => (
+                        <div key={index} className="flex items-start space-x-2">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
+                          <span className="text-sm">{tip}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Actions */}
-        <div className="mt-8 flex space-x-4">
-          <Link href={`/dashboard/writing-assistant?profile=${profile.id}`}>
-            <Button>
-              Use Writing Assistant
-            </Button>
-          </Link>
-          <Link href="/dashboard/templates">
-            <Button variant="outline">
-              Browse Templates
-            </Button>
-          </Link>
-        </div>
+          <TabsContent value="tools" className="space-y-6">
+            {/* AI Communication Tools */}
+            <AIToolsSection
+              profileId={profile.id}
+              profileData={{
+                target_name: profile.target_name,
+                disc_type: profile.disc_type
+              }}
+            />
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap gap-4">
+              <Link href={`/dashboard/writing-assistant?profile=${profile.id}`}>
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  Use Writing Assistant
+                </Button>
+              </Link>
+              <Link href="/dashboard/templates">
+                <Button variant="outline" className="border-border/50 hover:border-primary/50">
+                  Browse Templates
+                </Button>
+              </Link>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )
