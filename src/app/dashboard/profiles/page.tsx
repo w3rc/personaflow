@@ -51,7 +51,7 @@ export default async function ProfilesPage() {
     .eq('user_id', user.id)
     .single()
 
-  const limit = subscription?.monthly_profile_limit || 5
+  const limit = subscription?.monthly_profile_limit || 50
   // Count all profiles toward usage
   const used = profileCount
 
