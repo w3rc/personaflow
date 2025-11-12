@@ -61,8 +61,8 @@ export function ToolSelector({ activeTool, onSelectTool }: ToolSelectorProps) {
       </Tabs>
 
       {/* Tool Description */}
-      <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-        <p className="text-sm text-gray-700">
+      <div className="bg-card/50 rounded-lg p-3 border border-border/50">
+        <p className="text-sm text-foreground">
           {AI_TOOLS.find((t) => t.id === activeTool)?.description}
         </p>
       </div>

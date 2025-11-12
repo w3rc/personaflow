@@ -147,7 +147,7 @@ export function AIToolsSection({ profileId, profileData }: AIToolsSectionProps) 
   }
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 border-border/50 bg-card/50 backdrop-blur">
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -175,11 +175,11 @@ export function AIToolsSection({ profileId, profileData }: AIToolsSectionProps) 
 
         {/* Error Display */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 flex items-start gap-2">
+            <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-red-900">Error</p>
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm font-medium text-foreground">Error</p>
+              <p className="text-sm text-destructive">{error}</p>
             </div>
           </div>
         )}
@@ -188,8 +188,8 @@ export function AIToolsSection({ profileId, profileData }: AIToolsSectionProps) 
         {isLoadingHistory ? (
           <div className="flex items-center justify-center h-[400px]">
             <div className="text-center">
-              <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"></div>
-              <p className="text-sm text-gray-500">Loading conversation...</p>
+              <div className="w-8 h-8 border-4 border-border border-t-primary rounded-full animate-spin mx-auto mb-2"></div>
+              <p className="text-sm text-muted-foreground">Loading conversation...</p>
             </div>
           </div>
         ) : (
@@ -203,8 +203,8 @@ export function AIToolsSection({ profileId, profileData }: AIToolsSectionProps) 
         )}
 
         {/* Context Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-xs text-blue-900">
+        <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+          <p className="text-xs text-foreground">
             <strong>Profile Context:</strong> This AI assistant has full access to{' '}
             {profileData.target_name}&apos;s personality profile (DISC Type: {profileData.disc_type}),
             strengths, motivators, and communication preferences to provide personalized advice.

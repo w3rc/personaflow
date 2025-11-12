@@ -83,14 +83,14 @@ export function ChatInterface({
               <div
                 className={`max-w-[80%] rounded-lg px-4 py-2 ${
                   message.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-card border border-border/50'
                 }`}
               >
                 <div className="whitespace-pre-wrap break-words">{message.content}</div>
                 <div
                   className={`text-xs mt-1 ${
-                    message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
+                    message.role === 'user' ? 'text-primary-foreground/70' : 'text-muted-foreground'
                   }`}
                 >
                   {formatTimestamp(message.timestamp)}
@@ -98,7 +98,7 @@ export function ChatInterface({
                 {message.role === 'assistant' && (
                   <button
                     onClick={() => copyToClipboard(message.content)}
-                    className="mt-2 text-xs text-gray-600 hover:text-gray-900 flex items-center gap-1"
+                    className="mt-2 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
                   >
                     <Copy className="h-3 w-3" />
                     Copy
@@ -110,14 +110,14 @@ export function ChatInterface({
         )}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-lg px-4 py-2">
+            <div className="bg-card border border-border/50 rounded-lg px-4 py-2">
               <div className="flex items-center gap-2">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-100"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-200"></div>
                 </div>
-                <span className="text-sm text-gray-500">Thinking...</span>
+                <span className="text-sm text-muted-foreground">Thinking...</span>
               </div>
             </div>
           </div>
@@ -126,7 +126,7 @@ export function ChatInterface({
       </div>
 
       {/* Input Area */}
-      <div className="border-t p-4 bg-white">
+      <div className="border-t border-border/50 p-4 bg-card/50">
         <form onSubmit={handleSubmit} className="flex flex-col gap-2">
           <div className="flex gap-2">
             <Textarea
