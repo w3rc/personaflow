@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { analyzePersonalityWithFalAI } from '@/lib/falai'
 import { analyzePersonalityWithOpenRouter } from '@/lib/openrouter'
 import { createClient } from '@/lib/supabase/server'
 import { validateAnalysisText } from '@/lib/validation'
@@ -181,26 +180,14 @@ export async function POST(request: NextRequest) {
     let aiServiceUsed = 'none'
 
     try {
-      // Try fal.ai first
-      console.log('Attempting fal.ai analysis for user:', userId)
-      analysis = await analyzePersonalityWithFalAI(sanitizedText)
-      aiServiceUsed = 'fal.ai'
-      console.log('fal.ai analysis successful')
-    } catch (falError) {
-      console.error('fal.ai analysis failed, trying OpenRouter fallback:', falError)
-
-      try {
-        // Fallback to OpenRouter
-        console.log('Attempting OpenRouter analysis for user:', userId)
-        analysis = await analyzePersonalityWithOpenRouter(sanitizedText)
-        aiServiceUsed = 'openrouter'
-        console.log('OpenRouter analysis successful')
-      } catch (openrouterError) {
-        console.error('OpenRouter analysis failed, using basic fallback:', openrouterError)
-        // Final fallback to basic analysis with sanitized text
-        analysis = getBasicAnalysis(sanitizedText)
-        aiServiceUsed = 'basic'
-      }
+      console.log('Attempting OpenRouter analysis for user:', userId)
+      analysis = await analyzePersonalityWithOpenRouter(sanitizedText)
+      aiServiceUsed = 'openrouter'
+      console.log('OpenRouter analysis successful')
+    } catch (openrouterError) {
+      console.error('OpenRouter analysis failed, using basic fallback:', openrouterError)
+      analysis = getBasicAnalysis(sanitizedText)
+      aiServiceUsed = 'basic'
     }
 
     console.log(`Analysis completed using: ${aiServiceUsed}`)

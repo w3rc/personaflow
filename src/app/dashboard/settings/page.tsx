@@ -242,7 +242,7 @@ export default function SettingsPage() {
               </div>
               <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
                 <p className="text-xs text-foreground">
-                  <strong>Note:</strong> All models are powered by fal.ai&apos;s AnyLLM API. Changes take effect immediately for new conversations.
+                  <strong>Note:</strong> All models are powered by OpenRouter. Changes take effect immediately for new conversations.
                 </p>
               </div>
             </div>
